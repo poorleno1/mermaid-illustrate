@@ -52,16 +52,19 @@ function blocks(file) {
 // ---------- table lint ----------
 function lintTable(src) {
   const errors = [], warnings = [];
-  const lines = src.split('\n');
-  if (lines.some(l => !l.trim())) errors.push('blank line inside <table> - Markdown ends the HTML block there and shows the rest as text');
+  // Code inside <pre> (code cards) is raw HTML-block content: its indentation and * or ` characters are code, not Markdown.
+  const outsidePre = src.replace(/<pre\b[\s\S]*?<\/pre>/g, (m) => m.replace(/[^\n]/g, 'x'));
+  const lines = outsidePre.split('\n');
+  if (src.split('\n').some(l => !l.trim())) errors.push('blank line inside <table> - Markdown ends the HTML block there and shows the rest as text');
   if (lines.some(l => /^( {4,}|\t)/.test(l))) errors.push('line indented 4+ spaces - Markdown turns it into a code block; keep the HTML flush left');
-  const text = src.replace(/<[^>]*>/g, ' ');
+  const text = src.replace(/<pre\b[\s\S]*?<\/pre>/g, ' ').replace(/<[^>]*>/g, ' ');
   if (/`[^`]+`|\*\*[^*]+\*\*/.test(text)) warnings.push('Markdown syntax inside cells is not processed - use <code> chips or <b>');
   if (/\p{Extended_Pictographic}/u.test(text)) errors.push('emoji found - use icons or colour instead');
   const colours = [...new Set([...src.replace(/%23([0-9a-f]{6})/gi, '#$1').matchAll(/#[0-9a-f]{6}\b/gi)].map(m => m[0].toLowerCase()))];
   const off = colours.filter(c => !PALETTE.has(c));
   if (off.length) warnings.push(`colours outside the Azure Midnight palette: ${off.join(', ')}`);
   const tableTag = src.match(/<table[^>]*>/)?.[0] ?? '';
+  if (!/display:\s*table\b/i.test(tableTag)) warnings.push('table has no inline display:table - the Azure DevOps wiki lays tables out as blocks, so the card shrinks and colour or code spills past it');
   if (!/background:\s*#0b1a2e/i.test(tableTag)) warnings.push('table has no #0b1a2e background - styled tables are dark cards (see reference/tables.md)');
   if (/<th\b/.test(src) && !/border-bottom:\s*3px solid #3ca0ff/i.test(src)) warnings.push('header has no 3px #3ca0ff rule under it');
   if (!/<thead>/.test(src)) warnings.push('no <thead> - put header cells in <thead> so readers and screen readers see them as headers');

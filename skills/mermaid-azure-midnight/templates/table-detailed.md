@@ -6,7 +6,7 @@ cyan code chips inside the sentences, and a rounded status pill per row. Icons i
 Use for runbooks, pipeline stages, release notes, change plans: any table where each row needs a sentence or two.
 
 <div style="overflow-x:auto;max-width:100%">
-<table style="border-collapse:separate;border-spacing:0;width:100%;max-width:960px;background:#0b1a2e;color:#e6f1ff;border:1px solid #1f3a5f;border-radius:10px;overflow:hidden;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55">
+<table style="display:table;border-collapse:separate;border-spacing:0;width:100%;max-width:960px;background:#0b1a2e;color:#e6f1ff;border:1px solid #1f3a5f;border-radius:10px;overflow:hidden;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;min-width:720px">
 <thead>
 <tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">Stage</th><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">What happens</th><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">Status</th></tr>
 </thead>

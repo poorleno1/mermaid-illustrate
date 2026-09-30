@@ -27,7 +27,7 @@ parts.
 **Table and header**
 
 ```html
-<table style="border-collapse:separate;border-spacing:0;width:100%;max-width:960px;background:#0b1a2e;color:#e6f1ff;border:1px solid #1f3a5f;border-radius:10px;overflow:hidden;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55">
+<table style="display:table;border-collapse:separate;border-spacing:0;width:100%;max-width:1040px;min-width:720px;background:#0b1a2e;color:#e6f1ff;border:1px solid #1f3a5f;border-radius:10px;overflow:hidden;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55">
 <thead>
 <tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">Header</th></tr>
 </thead>
@@ -87,6 +87,10 @@ secondary references.
 
 ## Writing rules
 
+- Start every table style with `display:table;` and keep `width:100%;max-width:1040px;min-width:720px`. The Azure
+  DevOps wiki lays tables out as blocks that shrink to their content; without `display:table` the card ends short
+  while the colour or code inside runs on past it, and columns squeeze as the window narrows. With it, every table
+  spans the column up to 1040px and, below 720px, scrolls inside its wrapper instead of squeezing.
 - Wrap each table in `<div style="overflow-x:auto;max-width:100%">` ... `</div>` (same HTML block, no blank lines),
   so a wide table scrolls inside its own box on narrow screens. Do not force `white-space:nowrap` on whole prose or
   status cells; the pills and short chips already keep themselves on one line.
