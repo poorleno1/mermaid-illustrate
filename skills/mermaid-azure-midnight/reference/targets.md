@@ -7,6 +7,12 @@
 | `ado` | Azure DevOps wiki, PR descriptions, repo file preview | `graph`, `sequenceDiagram`, and the other types Microsoft lists | Leave out | Not checked yet |
 | offline | PDF export, air-gapped docs | All | No, they load from the internet | Icons show as empty squares |
 
+## Styled tables
+
+Styled tables are HTML with inline styles. VS Code preview and docs sites render them as designed. The Azure DevOps
+wiki allows HTML and is expected to keep the styles (not yet checked). GitHub strips every `style` attribute and
+shows a plain table, so a GitHub-only file should use a plain Markdown table. Details in `reference/tables.md`.
+
 ## Azure DevOps wiki
 
 Microsoft documents a limited Mermaid subset for the wiki:

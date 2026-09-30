@@ -1,65 +1,86 @@
 ---
 name: mermaid-azure-midnight
-description: Draw Mermaid diagrams in the Azure Midnight house style (dark navy theme, Geist and Geist Mono fonts, Iconify icons) for Azure, Azure DevOps, Terraform and pipeline documentation. Use whenever the user asks for a Mermaid diagram, flowchart, pipeline diagram, architecture diagram, sequence diagram or wiki diagram, or when a Markdown file or Azure DevOps wiki page needs a diagram.
+description: Make Markdown documents look polished in the Azure Midnight house style (dark navy theme, Geist and Geist Mono fonts, Iconify icons). Covers Mermaid diagrams and styled tables for Azure, Azure DevOps, Terraform and pipeline documentation. Use whenever the user asks for a Mermaid diagram, flowchart, pipeline diagram, architecture diagram, sequence diagram or wiki diagram, asks for a table in a Markdown file or wiki page, or wants a Markdown document or Azure DevOps wiki page to look better.
 ---
 
-# Mermaid: Azure Midnight standard
+# Azure Midnight: diagrams and tables for Markdown
 
-Produces diagrams that share one look: dark navy canvas, Azure blue and cyan accents, Geist for words,
-Geist Mono for anything typed in a terminal, and small tinted icons. Every rule here was verified by rendering
-with Mermaid 10, 11 and 12.
+Produces diagrams and tables that share one look: dark navy surfaces, Azure blue and cyan accents, Geist for
+words, Geist Mono for anything typed in a terminal, and small tinted icons. Every rule here was verified by
+rendering: diagrams with Mermaid 10, 11 and 12, tables through a Markdown renderer.
 
-## Workflow
+## Pick the render target first
 
-1. **Pick the render target** (see `reference/targets.md` when unsure):
-   - `web`: GitHub, VS Code preview, mermaid.live, docs sites. Icons allowed.
-   - `ado`: Azure DevOps wiki. Use `graph`, no icons, no `@{ }` syntax.
-2. **Pick the diagram type.**
-   - Flow of steps, pipelines, architecture: `graph TB`. Start from a template.
-   - Messages between systems over time: `sequenceDiagram`. Start from `templates/sequence-azure.md`.
-   - Other types: apply the palette from `reference/theme.md` where the type allows it.
-3. **Copy the closest template** from `templates/` and keep its `%%{init}%%` line, `classDef` lines and `style`
-   lines unchanged. Edit nodes and edges only.
+- `web`: GitHub, VS Code preview, mermaid.live, docs sites. Icons allowed.
+- `ado`: Azure DevOps wiki. Diagrams use `graph`, no icons, no `@{ }` syntax.
+
+GitHub strips all inline styles, so styled tables show there as plain tables. See `reference/targets.md` when unsure.
+
+## Diagrams
+
+1. **Pick the type.** Steps, pipelines, architecture: `graph TB`. Messages between systems over time:
+   `sequenceDiagram`. Other types: apply the palette from `reference/theme.md` where the type allows it.
+2. **Copy the closest template** and keep its `%%{init}%%` line, `classDef` lines and `style` lines unchanged.
+   Edit nodes and edges only.
    - `templates/flowchart-starter.md`: blank skeleton, two stages.
    - `templates/pipeline-terraform.md`: approved multi-environment Terraform pipeline (with and without icons).
    - `templates/architecture-azure.md`: Azure application architecture.
    - `templates/sequence-azure.md`: sequence diagram.
-4. **Assign classes by role** (full table in `reference/theme.md`): `bpProcess` step, `bpInfo` change to
+3. **Assign classes by role** (full table in `reference/theme.md`): `bpProcess` step, `bpInfo` change to
    infrastructure (apply, deploy), `bpData` artifact or data store, `bpDecision` human gate, `bpSuccess`,
    `bpError`, `bpUser` trigger or actor, `bpExternal` outside your control. Add `bpCode` to every node whose
    text is a command, file, branch or resource name.
-5. **Add icons** for the `web` target from `reference/icons.md`. One brand logo where a product enters the flow;
+4. **Add icons** for the `web` target from `reference/icons.md`. One brand logo where a product enters the flow;
    tinted Fluent icons for everything else.
-6. **Follow the layout rules** in `reference/layout.md`. The short version:
+5. **Follow the layout rules** in `reference/layout.md`. The short version:
    - Keep the outer `CANVAS` subgraph with `direction TB`.
    - Keep the flow a tree. Side items (artifacts, failures) hang off as leaves.
    - Link nodes, never subgraphs. Use hexagons `{{"..."}}` for gates, not diamonds.
    - A stage entered from above needs two or more nodes on its top row, or the connector crosses its title.
-7. **Check it** before handing it over:
-   ```bash
-   node <skill-dir>/scripts/check-mermaid.mjs <file.md> --target web --versions 10,11,12
-   ```
-   Fix every `error`. Run `npm install` in `scripts/` once first. Add `--png <dir>` to get screenshots for a
-   visual look; `--static` lints without a browser.
-8. **Save** the diagram in the Markdown file it belongs to. Use a ```` ```mermaid ```` fence; Azure DevOps wiki also
-   accepts `::: mermaid` blocks. For the `ado` target also keep or create an icon-free version.
+6. **Save** in a ```` ```mermaid ```` fence (Azure DevOps also accepts `::: mermaid`). For `ado`, keep an
+   icon-free version.
+
+## Tables
+
+1. **Pick the style** (details in `reference/tables.md`):
+   - **Detailed** (default), `templates/table-detailed.md`: a sentence or two per row, cyan code chips inside the
+     prose, a rounded status pill per row. Pipeline stages, runbooks, change plans.
+   - **Simple**, `templates/table-simple.md`: a thing, its name in cyan mono, a description. Inventories and
+     catalogues.
+   - Plain Markdown table: only for GitHub-only files or tiny tables inside lists.
+2. **Copy the template** and change only the text, keeping every `style` attribute. One to four columns.
+3. **Icons** in the first column when a fitting one exists; leave them out otherwise.
+4. **Status pills by meaning**: green done or healthy, amber waiting on a person, red blocked, blue informational,
+   grey not started.
+5. **Keep the HTML block intact**: no blank lines inside `<table>`, no indentation of four spaces or more, and
+   `<code>` or `<b>` instead of Markdown syntax inside cells.
+
+## Check before handing over
+
+```bash
+node <skill-dir>/scripts/check-mermaid.mjs <file.md> --target web --versions 10,11,12
+```
+
+It renders every diagram and lints every styled table in the file. Fix every `error`. Run `npm install` in
+`scripts/` once first. `--png <dir>` saves diagram screenshots; `--static` lints without a browser.
 
 ## Hard rules
 
-- Use only the palette in `reference/theme.md`. No other colours.
-- No emoji anywhere in a diagram.
+- Use only the palette in `reference/theme.md`. No other colours; never a white table or diagram background.
+- No emoji anywhere.
 - `themeVariables` values must not contain `-` or `'`. Mermaid silently drops the whole theme otherwise.
   Write font stacks without quotes and without `sans-serif`.
 - Never put `font-family` in a `classDef`; commas break it. Fonts go in `themeCSS`.
 - Count edges from 0 in source order; `linkStyle` numbers must match after every edit.
-- Keep labels short (under about 30 characters). The checker warns when a label wraps.
+- Keep diagram labels under about 30 characters and table prose cells to one or two sentences.
 - Do not use `@{ img: }`, `@{ icon: }` or `fa:` icons in Markdown. See `reference/icons.md` for why.
 
 ## References
 
 | File | Load when |
 |---|---|
-| `reference/theme.md` | Always, for colours, classes and the init block |
+| `reference/theme.md` | Any diagram: colours, classes and the init block |
 | `reference/layout.md` | Building or fixing a flowchart layout |
-| `reference/icons.md` | Adding icons (web target) |
-| `reference/targets.md` | Unsure where the diagram will render, or it renders wrong there |
+| `reference/tables.md` | Any styled table: styles, building blocks, pills, writing rules |
+| `reference/icons.md` | Adding icons to a diagram or table (web target) |
+| `reference/targets.md` | Unsure where the file will render, or it renders wrong there |

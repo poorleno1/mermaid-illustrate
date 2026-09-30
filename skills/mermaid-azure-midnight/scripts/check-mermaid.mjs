@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Lints and layout-checks Mermaid blocks in Markdown (.md) or Mermaid (.mmd) files.
+// Lints and layout-checks Mermaid blocks, and lints styled HTML tables, in Markdown (.md) or Mermaid (.mmd) files.
 //
 // Usage:
 //   node check-mermaid.mjs <file...> [--target ado|web] [--versions 10,11] [--png <dir>] [--static]
@@ -40,7 +40,30 @@ function blocks(file) {
   const out = [];
   const re = /^(```mermaid|::: ?mermaid)\s*\n([\s\S]*?)^(```|:::)\s*$/gm;
   for (let m; (m = re.exec(text));) out.push({ line: text.slice(0, m.index).split('\n').length, src: m[2].trim() });
+  // Styled HTML tables outside code fences. Fenced content is blanked (line count kept) so examples are skipped.
+  const unfenced = text.replace(/^(```|:::)[^\n]*\n[\s\S]*?^(```|:::)\s*$/gm, (m) => m.replace(/[^\n]/g, ''));
+  const tre = /^[ \t]*<table[\s>][\s\S]*?<\/table>/gm;
+  for (let m; (m = tre.exec(unfenced));) out.push({ line: unfenced.slice(0, m.index).split('\n').length, src: text.slice(m.index, m.index + m[0].length), table: true });
   return out;
+}
+
+// ---------- table lint ----------
+function lintTable(src) {
+  const errors = [], warnings = [];
+  const lines = src.split('\n');
+  if (lines.some(l => !l.trim())) errors.push('blank line inside <table> - Markdown ends the HTML block there and shows the rest as text');
+  if (lines.some(l => /^( {4,}|\t)/.test(l))) errors.push('line indented 4+ spaces - Markdown turns it into a code block; keep the HTML flush left');
+  const text = src.replace(/<[^>]*>/g, ' ');
+  if (/`[^`]+`|\*\*[^*]+\*\*/.test(text)) warnings.push('Markdown syntax inside cells is not processed - use <code> chips or <b>');
+  if (/\p{Extended_Pictographic}/u.test(text)) errors.push('emoji found - use icons or colour instead');
+  const colours = [...new Set([...src.replace(/%23([0-9a-f]{6})/gi, '#$1').matchAll(/#[0-9a-f]{6}\b/gi)].map(m => m[0].toLowerCase()))];
+  const off = colours.filter(c => !PALETTE.has(c));
+  if (off.length) warnings.push(`colours outside the Azure Midnight palette: ${off.join(', ')}`);
+  const tableTag = src.match(/<table[^>]*>/)?.[0] ?? '';
+  if (!/background:\s*#0b1a2e/i.test(tableTag)) warnings.push('table has no #0b1a2e background - styled tables are dark cards (see reference/tables.md)');
+  if (/<th\b/.test(src) && !/border-bottom:\s*3px solid #3ca0ff/i.test(src)) warnings.push('header has no 3px #3ca0ff rule under it');
+  if (!/<thead>/.test(src)) warnings.push('no <thead> - put header cells in <thead> so readers and screen readers see them as headers');
+  return { kind: 'table', errors, warnings };
 }
 
 // ---------- static lint ----------
@@ -158,6 +181,7 @@ async function render(items) {
       });
       const actual = await page.evaluate(() => window.mermaid?.version?.() ?? '');
       for (const it of items) {
+        if (it.kind === 'table') continue; // tables are linted statically
         const res = await page.evaluate(async (src, id) => {
           const out = document.getElementById('out');
           try {
@@ -197,10 +221,10 @@ async function render(items) {
 const items = [];
 for (const f of files) {
   const found = blocks(resolve(f));
-  if (!found.length) console.warn(`${f}: no mermaid blocks`);
-  for (const b of found) { const l = lint(b.src); items.push({ file: f, line: b.line, src: b.src, kind: l.kind, errors: l.errors, warnings: l.warnings, info: [] }); }
+  if (!found.length) console.warn(`${f}: no mermaid blocks or tables`);
+  for (const b of found) { const l = b.table ? lintTable(b.src) : lint(b.src); items.push({ file: f, line: b.line, src: b.src, kind: l.kind, errors: l.errors, warnings: l.warnings, info: [] }); }
 }
-if (!staticOnly && items.length) {
+if (!staticOnly && items.some(i => i.kind !== 'table')) {
   try { await render(items); }
   catch (e) { console.error(`render skipped: ${e.message}`); process.exitCode = 1; }
 }
@@ -213,5 +237,5 @@ for (const it of items) {
   it.warnings.forEach(w => console.log(`   warning  ${w}`));
   it.info.forEach(i => console.log(`   info     ${i}`));
 }
-console.log(`\n${items.length - failed}/${items.length} diagrams passed.`);
+console.log(`\n${items.length - failed}/${items.length} blocks passed.`);
 if (failed) process.exitCode = 1;

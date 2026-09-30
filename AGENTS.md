@@ -15,7 +15,7 @@ This is an **AI Agent Skill** for creating Mermaid diagrams. It follows the [Age
 
 ### Second skill: `skills/mermaid-azure-midnight/`
 
-This fork adds a separate skill with its own palette (Azure Midnight, dark navy). Its `classDef` names match the
+This fork adds a separate skill with its own palette (Azure Midnight, dark navy) covering Mermaid diagrams and styled HTML tables. Its `classDef` names match the
 `bp*` names above, but its colours intentionally differ from IBM Carbon. The Blueprint rules in this file apply to
 the root skill only; do not "correct" Azure Midnight colours to Carbon values. For that skill, the canonical source
 is `skills/mermaid-azure-midnight/reference/theme.md`, and every template must pass

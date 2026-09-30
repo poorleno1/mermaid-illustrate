@@ -5,9 +5,9 @@
   skills/mermaid-azure-midnight/SKILL.md instead; it has templates, icons and a checker.
 -->
 
-## Mermaid diagrams: Azure Midnight standard
+## Diagrams and tables: Azure Midnight standard
 
-When writing any Mermaid diagram, follow these rules.
+When writing any Mermaid diagram or styled table in Markdown, follow these rules.
 
 **Target.** Azure DevOps wiki: use `graph` (not `flowchart`), no icons, no `@{ }` syntax, no links to
 subgraphs. GitHub / VS Code / docs: the same, plus optional icons.
@@ -56,3 +56,10 @@ entered from above needs two nodes on its top row or the line crosses its title.
 at the start of a label, tinted with the role colour (`3ca0ff` process, `50e6ff` data, `ffb900` decision,
 `6ccb5f` success, `f1707b` error, `e6f1ff` neutral). Brand logos (`logos/terraform-icon`, `devicon/azuredevops`)
 without a tint, once per diagram.
+
+**Tables.** Styled tables are dark HTML cards, never white. Copy `skills/mermaid-azure-midnight/templates/table-detailed.md`
+(default: prose with cyan `<code>` chips and a status pill per row) or `table-simple.md` (name in cyan mono plus a
+description), keep every `style` attribute and change only the text. Header: `#0e2a4a` band, `#9cc3ea` capitals, 3px
+`#3ca0ff` rule. Body: `#0b1a2e` banded with `#10243f`. Pills: green done, amber waiting, red blocked, blue info, grey
+not started. No blank lines and no 4-space indentation inside `<table>`; no Markdown syntax inside cells. GitHub strips
+the styles, so GitHub-only files get plain Markdown tables.

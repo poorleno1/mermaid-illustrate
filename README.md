@@ -9,19 +9,21 @@ A comprehensive skill for AI coding agents to create 23 types of Mermaid diagram
 ## Azure Midnight standard (this fork)
 
 A second, focused skill for Azure, Azure DevOps and Terraform documentation lives in
-[`skills/mermaid-azure-midnight/`](skills/mermaid-azure-midnight/SKILL.md): dark navy theme, Geist and Geist Mono
-fonts, Iconify icons, verified templates and a layout checker.
+[`skills/mermaid-azure-midnight/`](skills/mermaid-azure-midnight/SKILL.md). It makes Markdown documents look
+polished: Mermaid diagrams and styled tables in a dark navy theme, Geist and Geist Mono fonts, Iconify icons,
+verified templates and a checker.
 
 | Purpose | File |
 |---|---|
 | Skill entry point (Claude Code, Copilot, Cursor, Codex, Gemini) | `skills/mermaid-azure-midnight/SKILL.md` |
 | Palette, fonts, classes, init blocks | `skills/mermaid-azure-midnight/reference/theme.md` |
 | Layout rules and Mermaid pitfalls | `skills/mermaid-azure-midnight/reference/layout.md` |
+| Table styles (detailed, simple), chips and status pills | `skills/mermaid-azure-midnight/reference/tables.md` |
 | Icon method and 46-icon catalog | `skills/mermaid-azure-midnight/reference/icons.md` |
 | Where diagrams render (Azure DevOps wiki, GitHub, offline) | `skills/mermaid-azure-midnight/reference/targets.md` |
 | Copy-paste templates | `skills/mermaid-azure-midnight/templates/` |
 | Always-on rules for agents without skill support | `agents/mermaid-rules.md` |
-| Design history (theme, font and icon studies) | `docs/themes/`, `docs/plan-2026-09-30_09-50.md` |
+| Design history (theme, font, icon and table studies) | `docs/themes/`, `docs/tables/`, `docs/plan-2026-09-30_09-50.md` |
 
 **Prerequisites**: Node.js 18+ and Microsoft Edge or Google Chrome (for the checker only).
 
@@ -42,8 +44,8 @@ Other agents: copy or link the folder into their skills directory (see the insta
 
 **Usage**
 
-Ask the agent for a diagram ("draw the release pipeline as a Mermaid diagram"). The skill loads on its own.
-To check any Markdown file:
+Ask the agent for a diagram or a table ("draw the release pipeline as a Mermaid diagram", "add a table of the
+pipeline stages"). The skill loads on its own. To check any Markdown file (diagrams are rendered, tables linted):
 
 ```bash
 node skills/mermaid-azure-midnight/scripts/check-mermaid.mjs docs/page.md --target ado --versions 10,11,12
