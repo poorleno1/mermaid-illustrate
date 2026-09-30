@@ -13,7 +13,9 @@ each styled table is an HTML `<table>` block with inline styles, pasted into the
 
 Both styled tables share one look:
 
-- Dark card: navy background `#0b1a2e`, rows banded with `#10243f`, thin `#1f3a5f` lines. Never a white or transparent body.
+- Dark card: navy `#0b1a2e` cells, rows banded with `#10243f`, thin `#1f3a5f` lines. Never a white or transparent body.
+- Painted on the cells only. The `<table>` element carries no background or border (see Writing rules).
+- Fixed width: columns in pixels that add up to 1040px, so every table has the same width.
 - Header: full-width `#0e2a4a` band, pale-blue `#9cc3ea` capitals, 12px semi-bold, and a thick 3px `#3ca0ff` rule under it.
 - Text: white `#e6f1ff` in Geist. Names and commands in Geist Mono, cyan `#50e6ff`.
 - Icons in the first column when a fitting one exists in `reference/icons.md`. Optional; leave them out rather than force a weak match.
@@ -27,22 +29,27 @@ parts.
 **Table and header**
 
 ```html
-<table style="display:table;border-collapse:separate;border-spacing:0;width:100%;max-width:1040px;min-width:720px;background:#0b1a2e;color:#e6f1ff;border:1px solid #1f3a5f;border-radius:10px;overflow:hidden;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55">
+<table style="border-collapse:separate;border-spacing:0;width:1040px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:#e6f1ff">
 <thead>
-<tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">Header</th></tr>
+<tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;width:260px;box-sizing:border-box;border-top:1px solid #1f3a5f;border-left:1px solid #1f3a5f">Header</th></tr>
 </thead>
 <tbody>
 ```
 
-Repeat the `<th>` once per column.
+Repeat the `<th>` once per column. Give each header a pixel `width`; the widths must add up to 1040px. Weight them by
+content: short IDs and names narrow (about 100 to 180px), prose wide.
 
-**Cells.** Rows alternate background. The first row has no top border.
+**Cells.** Rows alternate background. The first row has no top border. Every cell has `box-sizing:border-box`.
 
 ```html
-<td style="padding:13px 18px;vertical-align:top;background:#0b1a2e;">...</td>
-<td style="padding:13px 18px;vertical-align:top;background:#10243f;border-top:1px solid #1f3a5f;">...</td>
-<td style="padding:13px 18px;vertical-align:top;background:#0b1a2e;border-top:1px solid #1f3a5f;">...</td>
+<td style="padding:13px 18px;vertical-align:top;background:#0b1a2e;box-sizing:border-box">...</td>
+<td style="padding:13px 18px;vertical-align:top;background:#10243f;border-top:1px solid #1f3a5f;box-sizing:border-box">...</td>
+<td style="padding:13px 18px;vertical-align:top;background:#0b1a2e;border-top:1px solid #1f3a5f;box-sizing:border-box">...</td>
 ```
+
+**Frame.** Drawn by the cells, not the table: `border-top:1px solid #1f3a5f` on the header cells,
+`border-left` on every first-column cell, `border-right` on every last-column cell and `border-bottom` on the cells
+of the last row.
 
 Append these to a cell's `style` by column role:
 
@@ -87,10 +94,12 @@ secondary references.
 
 ## Writing rules
 
-- Start every table style with `display:table;` and keep `width:100%;max-width:1040px;min-width:720px`. The Azure
-  DevOps wiki lays tables out as blocks that shrink to their content; without `display:table` the card ends short
-  while the colour or code inside runs on past it, and columns squeeze as the window narrows. With it, every table
-  spans the column up to 1040px and, below 720px, scrolls inside its wrapper instead of squeezing.
+- Never put a background, border, rounded corners or `overflow` on the `<table>` element. The Azure DevOps wiki
+  lays every table out as a block as wide as the page and ignores an inline `display:table`, so anything painted on
+  the table itself shows as an empty dark band to the right of the rows. Paint the cells; the checker warns otherwise.
+- Fix the width with pixel `width` on the header cells (adding up to 1040px) plus `box-sizing:border-box` on every
+  cell. Percentages and `max-width` do not hold on the wiki, and without fixed widths the columns squeeze as the
+  window narrows.
 - Wrap each table in `<div style="overflow-x:auto;max-width:100%">` ... `</div>` (same HTML block, no blank lines),
   so a wide table scrolls inside its own box on narrow screens. Do not force `white-space:nowrap` on whole prose or
   status cells; the pills and short chips already keep themselves on one line.

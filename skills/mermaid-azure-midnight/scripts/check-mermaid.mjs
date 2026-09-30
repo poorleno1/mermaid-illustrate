@@ -64,8 +64,10 @@ function lintTable(src) {
   const off = colours.filter(c => !PALETTE.has(c));
   if (off.length) warnings.push(`colours outside the Azure Midnight palette: ${off.join(', ')}`);
   const tableTag = src.match(/<table[^>]*>/)?.[0] ?? '';
-  if (!/display:\s*table\b/i.test(tableTag)) warnings.push('table has no inline display:table - the Azure DevOps wiki lays tables out as blocks, so the card shrinks and colour or code spills past it');
-  if (!/background:\s*#0b1a2e/i.test(tableTag)) warnings.push('table has no #0b1a2e background - styled tables are dark cards (see reference/tables.md)');
+  // The Azure DevOps wiki lays tables out as blocks as wide as the page and ignores inline display, so anything
+  // painted on <table> itself (background, border) spills past the rows. Colour and frame belong on the cells.
+  if (/(^|;|")\s*(background|border)(-color)?\s*:/i.test(tableTag)) warnings.push('background or border on <table> itself - the Azure DevOps wiki stretches it to the page width; paint the cells instead (see reference/tables.md)');
+  if (!/<t[hd][^>]*background:\s*#(0b1a2e|10243f|0e2a4a)/i.test(src)) warnings.push('cells have no Azure Midnight background - styled tables are dark cards painted on their cells');
   if (/<th\b/.test(src) && !/border-bottom:\s*3px solid #3ca0ff/i.test(src)) warnings.push('header has no 3px #3ca0ff rule under it');
   if (!/<thead>/.test(src)) warnings.push('no <thead> - put header cells in <thead> so readers and screen readers see them as headers');
   return { kind: 'table', errors, warnings };

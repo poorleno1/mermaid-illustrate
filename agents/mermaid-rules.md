@@ -65,6 +65,8 @@ without a tint, once per diagram.
 **Tables.** Styled tables are dark HTML cards, never white. Copy `skills/mermaid-azure-midnight/templates/table-detailed.md`
 (default: prose with cyan `<code>` chips and a status pill per row) or `table-simple.md` (name in cyan mono plus a
 description), keep every `style` attribute and change only the text. Header: `#0e2a4a` band, `#9cc3ea` capitals, 3px
-`#3ca0ff` rule. Body: `#0b1a2e` banded with `#10243f`. Pills: green done, amber waiting, red blocked, blue info, grey
+`#3ca0ff` rule. Body: `#0b1a2e` banded with `#10243f`. Paint the cells only: no background or border on `<table>` itself (the Azure
+DevOps wiki stretches it to the page width), header cells with pixel widths adding up to 1040px, and
+`box-sizing:border-box` on every cell. Pills: green done, amber waiting, red blocked, blue info, grey
 not started. No blank lines and no 4-space indentation inside `<table>`; no Markdown syntax inside cells. GitHub strips
 the styles, so GitHub-only files get plain Markdown tables.
