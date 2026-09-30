@@ -1,0 +1,217 @@
+#!/usr/bin/env node
+// Lints and layout-checks Mermaid blocks in Markdown (.md) or Mermaid (.mmd) files.
+//
+// Usage:
+//   node check-mermaid.mjs <file...> [--target ado|web] [--versions 10,11] [--png <dir>] [--static]
+//
+//   --target ado   Azure DevOps wiki profile: also flags syntax the wiki does not support.
+//   --target web   Default. GitHub, VS Code, mermaid.live, docs sites.
+//   --versions     Mermaid major versions to render with (default 11). Loaded from cdn.jsdelivr.net.
+//   --png <dir>    Save a screenshot of each rendered block for visual review.
+//   --static       Lint only; skip the browser render.
+//
+// Browser: uses Edge or Chrome already installed. Override with CHROME_PATH.
+// Exit code 1 when any error is found; warnings do not fail the run.
+
+import { readFileSync, existsSync, mkdirSync } from 'node:fs';
+import { basename, join, resolve } from 'node:path';
+
+const args = process.argv.slice(2);
+const opt = (name, def) => { const i = args.indexOf(name); return i >= 0 ? args.splice(i, 2)[1] : def; };
+const flag = (name) => { const i = args.indexOf(name); return i >= 0 ? (args.splice(i, 1), true) : false; };
+const target = opt('--target', 'web');
+const versions = opt('--versions', '11').split(',').map(s => s.trim());
+const pngDir = opt('--png', null);
+const staticOnly = flag('--static');
+const files = args;
+if (!files.length) { console.error('Usage: node check-mermaid.mjs <file...> [--target ado|web] [--versions 10,11] [--png dir] [--static]'); process.exit(2); }
+
+// Every colour in reference/theme.md. Anything else is off-palette.
+const PALETTE = new Set(['#0b1a2e', '#1f3a5f', '#10243f', '#24476f', '#9cc3ea', '#e6f1ff', '#3ca0ff', '#0078d4', '#50e6ff',
+  '#ffb900', '#6ccb5f', '#f1707b', '#0e2a4a', '#132c4c', '#6b8bb0', '#004a8f', '#ffffff', '#06323b', '#d6fbff',
+  '#3a2c00', '#fff4ce', '#0f2e17', '#dff6dd', '#3b0f14', '#fde7e9', '#0d1726', '#3d5573',
+  'rgb(11, 26, 46)', 'rgb(16, 36, 63)']);
+const CLASSES = ['bpProcess', 'bpInfo', 'bpData', 'bpDecision', 'bpWarning', 'bpSuccess', 'bpError', 'bpUser', 'bpExternal', 'bpCode'];
+
+// ---------- extract ----------
+function blocks(file) {
+  const text = readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+  if (file.endsWith('.mmd')) return [{ line: 1, src: text.trim() }];
+  const out = [];
+  const re = /^(```mermaid|::: ?mermaid)\s*\n([\s\S]*?)^(```|:::)\s*$/gm;
+  for (let m; (m = re.exec(text));) out.push({ line: text.slice(0, m.index).split('\n').length, src: m[2].trim() });
+  return out;
+}
+
+// ---------- static lint ----------
+function lint(src) {
+  const errors = [], warnings = [];
+  const init = src.match(/%%\{\s*init:\s*([\s\S]*?)\}%%/);
+  if (init) {
+    let cfg;
+    try { cfg = JSON.parse(init[1]); } catch (e) { errors.push(`init block is not valid JSON (use double quotes): ${e.message}`); }
+    for (const [k, v] of Object.entries(cfg?.themeVariables ?? {})) {
+      if (/[-']/.test(String(v))) errors.push(`themeVariables.${k} contains "-" or "'" - Mermaid silently ignores the whole init block. Value: ${v}`);
+    }
+  }
+  const colours = [...src.replace(/%23([0-9a-f]{6})/gi, '#$1').matchAll(/#[0-9a-f]{6}\b|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)/gi)]
+    .map(m => m[0].toLowerCase().replace(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/, 'rgb($1, $2, $3)'));
+  const offPalette = [...new Set(colours.filter(c => !PALETTE.has(c)))];
+  if (offPalette.length) warnings.push(`colours outside the Azure Midnight palette: ${offPalette.join(', ')}`);
+  if (/\p{Extended_Pictographic}/u.test(src.replace(/%%\{[\s\S]*?\}%%/, ''))) errors.push('emoji found - use icons or colour instead');
+  const body = src.replace(/%%\{[\s\S]*?\}%%/, '');
+  const kind = body.trim().split(/\s/)[0];
+  for (const m of src.matchAll(/^\s*classDef\s+(\S+)/gm)) if (!CLASSES.includes(m[1])) warnings.push(`classDef "${m[1]}" is not a standard class (${CLASSES.join(', ')})`);
+  if (/^\s*classDef\s+\S+\s+[^\n]*font-family/m.test(src)) errors.push('font-family in classDef: commas split the stack. Use themeCSS with the bpCode class');
+
+  if (['graph', 'flowchart'].includes(kind)) {
+    const subgraphs = [...src.matchAll(/^\s*subgraph\s+([A-Za-z0-9_]+)/gm)].map(m => m[1]);
+    const edgeLines = src.split('\n').filter(l => /(-->|-\.->|==>|---|~~~)/.test(l));
+    for (const sg of subgraphs) {
+      if (edgeLines.some(l => new RegExp(`(^|\\s|&)${sg}(\\s|$|&)`).test(l.replace(/\|[^|]*\|/g, ' ')))) {
+        (target === 'ado' ? errors : warnings).push(`edge to or from subgraph "${sg}" - link nodes instead (Azure DevOps rejects it)`);
+      }
+    }
+    const firstSub = src.match(/^\s*subgraph\s+[^\n]+\n(\s*)([^\n]*)/m);
+    if (firstSub && !/direction\s+(TB|TD|LR|RL|BT)/.test(firstSub[2])) warnings.push('outer subgraph has no "direction" line - Mermaid may flip it sideways');
+    if (/[A-Za-z0-9_]\{"[^"]*"\}/.test(body.replace(/\{\{"[^"]*"\}\}/g, ''))) warnings.push('diamond node found - prefer hexagon {{"..."}} for gates; diamonds grow large with text');
+  }
+  if (target === 'ado') {
+    if (kind === 'flowchart') errors.push('Azure DevOps wiki: use "graph", not "flowchart"');
+    if (/@\{/.test(src)) errors.push('Azure DevOps wiki: @{ } node syntax is not supported');
+    if (/\bfa:fa-/.test(src)) errors.push('Azure DevOps wiki: FontAwesome icons are not supported');
+    if (/---->/.test(src)) errors.push('Azure DevOps wiki: long arrows (---->) are not supported');
+    if (/<img/i.test(src)) warnings.push('Azure DevOps wiki: <img> icons are not verified there; keep an icon-free fallback');
+  } else if (/@\{\s*(icon|img):/.test(src)) {
+    warnings.push('@{ icon: } / @{ img: } nodes: icon packs are not registered in Markdown renderers, and img nodes break the dark theme. Use inline <img> in labels');
+  }
+  return { kind, errors, warnings };
+}
+
+// ---------- browser ----------
+function browserPath() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+    'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
+    'C:/Program Files/Google/Chrome/Application/chrome.exe',
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    '/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/microsoft-edge',
+  ].filter(Boolean);
+  return candidates.find(p => existsSync(p));
+}
+
+// Runs inside the page. Mirrors the checks used to approve the standard.
+const pageCheck = () => {
+  const segInt = (a, b, c, d) => { const o = (p, q, r) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x); return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0; };
+  const inside = (p, r, m = 0) => p.x > r.left - m && p.x < r.right + m && p.y > r.top - m && p.y < r.bottom + m;
+  const svg = document.querySelector('#out svg');
+  const name = (n) => (n.querySelector('.nodeLabel')?.textContent || n.id).trim();
+  const nodes = [...svg.querySelectorAll('g.node')].map(n => ({ n: name(n), r: n.getBoundingClientRect() }));
+  const issues = [];
+  for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+    const a = nodes[i].r, b = nodes[j].r;
+    if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) issues.push(`boxes overlap: "${nodes[i].n}" and "${nodes[j].n}"`);
+  }
+  const paths = [...svg.querySelectorAll('.edgePaths path, path.flowchart-link')];
+  const pts = [...new Set(paths)].map(p => { const L = p.getTotalLength(), m = p.getScreenCTM(), a = []; for (let k = 0; k <= 60; k++) { const q = p.getPointAtLength(L * k / 60); a.push({ x: m.a * q.x + m.c * q.y + m.e, y: m.b * q.x + m.d * q.y + m.f }); } return a; });
+  let crossings = 0;
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    let hit = false;
+    for (let k = 0; k < 60 && !hit; k++) for (let l = 0; l < 60 && !hit; l++) if (segInt(pts[i][k], pts[i][k + 1], pts[j][l], pts[j][l + 1])) hit = true;
+    if (hit) crossings++;
+  }
+  if (crossings) issues.push(`${crossings} pair(s) of connectors cross`);
+  pts.forEach(a => nodes.forEach(n => { if (a.slice(4, -4).some(p => inside(p, n.r, -2))) issues.push(`a connector runs through box "${n.n}"`); }));
+  const titles = [...svg.querySelectorAll('.cluster-label .nodeLabel')].filter(t => t.textContent.trim()).map(t => ({ t: t.textContent.trim(), r: t.getBoundingClientRect() }));
+  titles.forEach(t => { if (pts.some(a => a.some(p => inside(p, t.r, 3)))) issues.push(`a connector runs through title "${t.t}"`); });
+  svg.querySelectorAll('g.node').forEach(n => {
+    const l = n.querySelector('.nodeLabel'), s = n.querySelector('rect,path,polygon');
+    if (l && s && l.getBoundingClientRect().width > s.getBoundingClientRect().width - 8) issues.push(`text does not fit box "${name(n)}"`);
+  });
+  const warnings = [];
+  const broken = [...svg.querySelectorAll('img')].filter(i => !i.naturalWidth).length;
+  if (broken) warnings.push(`${broken} icon(s) did not load (offline or wrong name)`);
+  const wrapped = [...svg.querySelectorAll('g.node .nodeLabel')].filter(l => l.getBoundingClientRect().height > 30).map(l => l.textContent.trim());
+  if (wrapped.length) warnings.push(`label wraps onto two lines: ${wrapped.map(w => `"${w}"`).join(', ')}`);
+  const vb = svg.viewBox.baseVal;
+  return { issues, warnings, size: `${Math.round(vb.width)}x${Math.round(vb.height)}` };
+};
+
+async function render(items) {
+  const exe = browserPath();
+  if (!exe) throw new Error('No Edge or Chrome found. Set CHROME_PATH or run with --static.');
+  const { default: puppeteer } = await import('puppeteer-core');
+  const browser = await puppeteer.launch({ executablePath: exe, headless: true });
+  try {
+    for (const v of versions) {
+      const page = await browser.newPage();
+      await page.setViewport({ width: 1400, height: 1000 });
+      await page.setContent(`<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@${v}/dist/mermaid.min.js"></script>
+<body style="margin:0;background:#ffffff"><div id="out" style="display:inline-block;padding:16px"></div></body>`, { waitUntil: 'networkidle0', timeout: 60000 });
+      await page.evaluate(async () => {
+        await Promise.all(['15px Geist', '600 15px Geist', '15px Geist Mono'].map(f => document.fonts.load(f).catch(() => {})));
+        window.mermaid.initialize({ startOnLoad: false });
+      });
+      const actual = await page.evaluate(() => window.mermaid?.version?.() ?? '');
+      for (const it of items) {
+        const res = await page.evaluate(async (src, id) => {
+          const out = document.getElementById('out');
+          try {
+            const { svg } = await window.mermaid.render(id, src);
+            out.innerHTML = svg;
+            // Show at natural size so measurements are in real pixels.
+            const el = out.querySelector('svg'), vb = el.viewBox.baseVal;
+            if (vb && vb.width) { el.style.maxWidth = 'none'; el.style.width = `${vb.width}px`; el.style.height = `${vb.height}px`; }
+          }
+          catch (e) { return { error: String(e.message || e).split('\n')[0] }; }
+          await Promise.all([...out.querySelectorAll('img')].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; setTimeout(r, 8000); })));
+          return { ok: true };
+        }, it.src, `m${Math.random().toString(36).slice(2)}`);
+        const key = `mermaid ${actual || v}`;
+        if (res.error) { it.errors.push(`${key}: render failed - ${res.error}`); continue; }
+        if (!['graph', 'flowchart'].includes(it.kind)) { it.info.push(`${key}: rendered (layout checks apply to flowcharts only)`); }
+        else {
+          const r = await page.evaluate(pageCheck);
+          r.issues.forEach(x => it.errors.push(`${key}: ${x}`));
+          r.warnings.forEach(x => it.warnings.push(`${key}: ${x}`));
+          it.info.push(`${key}: rendered ${r.size}`);
+        }
+        if (pngDir) {
+          mkdirSync(pngDir, { recursive: true });
+          const el = await page.$('#out');
+          const file = join(pngDir, `${basename(it.file).replace(/\.\w+$/, '')}-L${it.line}-v${v}.png`);
+          await el.screenshot({ path: file });
+          it.info.push(`screenshot ${file}`);
+        }
+      }
+      await page.close();
+    }
+  } finally { await browser.close(); }
+}
+
+// ---------- main ----------
+const items = [];
+for (const f of files) {
+  const found = blocks(resolve(f));
+  if (!found.length) console.warn(`${f}: no mermaid blocks`);
+  for (const b of found) { const l = lint(b.src); items.push({ file: f, line: b.line, src: b.src, kind: l.kind, errors: l.errors, warnings: l.warnings, info: [] }); }
+}
+if (!staticOnly && items.length) {
+  try { await render(items); }
+  catch (e) { console.error(`render skipped: ${e.message}`); process.exitCode = 1; }
+}
+let failed = 0;
+for (const it of items) {
+  const status = it.errors.length ? 'FAIL' : 'PASS';
+  if (it.errors.length) failed++;
+  console.log(`${status}  ${it.file}:${it.line}  (${it.kind}, target ${target})`);
+  it.errors.forEach(e => console.log(`   error    ${e}`));
+  it.warnings.forEach(w => console.log(`   warning  ${w}`));
+  it.info.forEach(i => console.log(`   info     ${i}`));
+}
+console.log(`\n${items.length - failed}/${items.length} diagrams passed.`);
+if (failed) process.exitCode = 1;

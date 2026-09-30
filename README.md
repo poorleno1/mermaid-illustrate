@@ -6,6 +6,54 @@ A comprehensive skill for AI coding agents to create 23 types of Mermaid diagram
 
 ---
 
+## Azure Midnight standard (this fork)
+
+A second, focused skill for Azure, Azure DevOps and Terraform documentation lives in
+[`skills/mermaid-azure-midnight/`](skills/mermaid-azure-midnight/SKILL.md): dark navy theme, Geist and Geist Mono
+fonts, Iconify icons, verified templates and a layout checker.
+
+| Purpose | File |
+|---|---|
+| Skill entry point (Claude Code, Copilot, Cursor, Codex, Gemini) | `skills/mermaid-azure-midnight/SKILL.md` |
+| Palette, fonts, classes, init blocks | `skills/mermaid-azure-midnight/reference/theme.md` |
+| Layout rules and Mermaid pitfalls | `skills/mermaid-azure-midnight/reference/layout.md` |
+| Icon method and 46-icon catalog | `skills/mermaid-azure-midnight/reference/icons.md` |
+| Where diagrams render (Azure DevOps wiki, GitHub, offline) | `skills/mermaid-azure-midnight/reference/targets.md` |
+| Copy-paste templates | `skills/mermaid-azure-midnight/templates/` |
+| Always-on rules for agents without skill support | `agents/mermaid-rules.md` |
+| Design history (theme, font and icon studies) | `docs/themes/`, `docs/plan-2026-09-30_09-50.md` |
+
+**Prerequisites**: Node.js 18+ and Microsoft Edge or Google Chrome (for the checker only).
+
+**Setup**
+
+```bash
+# Claude Code, user-wide (Windows: use a junction so updates in this repo flow through)
+cmd /c mklink /J "%USERPROFILE%\.claude\skills\mermaid-azure-midnight" "<repo>\skills\mermaid-azure-midnight"
+# macOS / Linux
+ln -s "<repo>/skills/mermaid-azure-midnight" ~/.claude/skills/mermaid-azure-midnight
+
+# Checker dependencies (once)
+cd skills/mermaid-azure-midnight/scripts && npm install
+```
+
+Other agents: copy or link the folder into their skills directory (see the install table below), or paste
+`agents/mermaid-rules.md` into their instructions file.
+
+**Usage**
+
+Ask the agent for a diagram ("draw the release pipeline as a Mermaid diagram"). The skill loads on its own.
+To check any Markdown file:
+
+```bash
+node skills/mermaid-azure-midnight/scripts/check-mermaid.mjs docs/page.md --target ado --versions 10,11,12
+```
+
+**Configuration**: `--target ado|web` picks the rule set, `--versions` the Mermaid versions to render with,
+`--png <dir>` saves screenshots, `--static` lints without a browser. `CHROME_PATH` overrides the browser.
+
+---
+
 ## What This Skill Does
 
 - Creates **23 types** of Mermaid diagrams: flowcharts, sequence, class, state, ER, user journey, Gantt, pie, quadrant, requirement, Git graph, C4, mindmap, timeline, ZenUML, Sankey, XY chart, block, packet, Kanban, architecture, radar, and treemap.

@@ -13,6 +13,14 @@ This is an **AI Agent Skill** for creating Mermaid diagrams. It follows the [Age
 - **Reference material**: `examples/` (25 files, loaded on demand by agents)
 - **Design system**: Blueprint (IBM Carbon v11 + C4 model)
 
+### Second skill: `skills/mermaid-azure-midnight/`
+
+This fork adds a separate skill with its own palette (Azure Midnight, dark navy). Its `classDef` names match the
+`bp*` names above, but its colours intentionally differ from IBM Carbon. The Blueprint rules in this file apply to
+the root skill only; do not "correct" Azure Midnight colours to Carbon values. For that skill, the canonical source
+is `skills/mermaid-azure-midnight/reference/theme.md`, and every template must pass
+`node skills/mermaid-azure-midnight/scripts/check-mermaid.mjs <file> --versions 10,11,12`.
+
 ---
 
 ## Repository Conventions
