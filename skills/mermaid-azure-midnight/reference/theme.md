@@ -35,7 +35,7 @@ Segoe UI and Cascadia Mono. Mermaid sizes boxes with whatever font the reader ha
 Paste as the first line. Do not reformat it: it must stay valid JSON on one line.
 
 ```text
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
 ```
 
 What each `themeCSS` rule does:
@@ -43,6 +43,11 @@ What each `themeCSS` rule does:
 - `.nodeLabel img`: puts an icon left of its text at 18px. Without it Mermaid stacks the icon above the text and stretches it.
 - `.bpCode .nodeLabel`: switches nodes with the `bpCode` class to Geist Mono.
 - `.cluster-label .nodeLabel`: semi-bold stage titles.
+- `.edgeLabel ...` and `.edgeLabel rect`: puts connector labels on a navy chip in pale blue. Without them some
+  Mermaid versions draw a light box behind the label.
+
+For the Azure DevOps wiki, `scripts/to-ado.mjs` rewrites this line: fonts move into `themeCSS`, `wrappingWidth`
+goes, and the Geist Mono rule is dropped. See `reference/targets.md`.
 
 ## Classes
 

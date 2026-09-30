@@ -41,6 +41,16 @@ The layout engine (dagre) can draw a tree with no crossings. Every extra cross-l
 - A subgraph holding a single node that is entered from above always collides. Drop the subgraph and put the
   resource name in the node text instead.
 - Keep stage titles short. Long titles widen the collision zone.
+- When several stages are entered from above and the node text already names each stage, blank the titles:
+  `subgraph STG_PLAN[" "]` with `style STG_PLAN ... color:#10243f` (title colour = band colour). The bands keep
+  grouping the nodes and nothing collides.
+
+## Sequence diagrams
+
+- Keep self-messages (`A->>A: ...`) on the first and last participant under about 24 characters. Mermaid centres
+  the text on the lifeline, so longer text spills past the canvas edge.
+- Put every message inside a `rect` band. In the Azure DevOps profile there is no `box` canvas, and the bands are
+  what keeps message text on a dark background.
 
 ## Nodes
 
@@ -52,8 +62,10 @@ The layout engine (dagre) can draw a tree with no crossings. Every extra cross-l
 ## Edges
 
 - Link nodes, never subgraph ids. Azure DevOps rejects subgraph links, and they produce awkward routing.
-- No edge labels. They collide with other connectors in dense areas and render with a mismatched background in
-  some Mermaid versions. Make the target node say what happens.
+- Edge labels are fine when short (a few words, such as `no, build` or `PR into story`). The init line's
+  `.edgeLabel` rules put them on a navy chip. Prefer node text when a label would sit in a dense area.
+- A labelled bypass edge can replace a row of boxes: `QB -.->|yes, reuse| ASM` instead of a "skipped" node per
+  branch. It halves the width of build-or-skip fan-outs.
 - Use `-->` and `-.->` only. Longer arrows (`---->`) fail in Azure DevOps.
 
 ## Mermaid behaviours to remember

@@ -9,13 +9,21 @@
 
 When writing any Mermaid diagram or styled table in Markdown, follow these rules.
 
-**Target.** Azure DevOps wiki: use `graph` (not `flowchart`), no icons, no `@{ }` syntax, no links to
-subgraphs. GitHub / VS Code / docs: the same, plus optional icons.
+**Target.** GitHub / VS Code / docs: the skeleton below, optional icons. Azure DevOps wiki: the skeleton below
+shows "Unsupported diagram type." there, so convert it first. Either run `skills/mermaid-azure-midnight/scripts/to-ado.mjs`,
+or by hand:
+- drop `fontFamily`, `fontSize`, `wrappingWidth` and any `sequence` section from the init line;
+- put `.nodeLabel, .edgeLabel, .cluster-label, .label { font-family: Geist, Segoe UI, Helvetica, Arial; }` at the
+  start of `themeCSS`, and remove the `.bpCode` and `.nodeLabel img` rules;
+- write the init JSON with a space after every `:` and `,`;
+- remove icons and any sequence `box`, and break label lines with `<br/>` at about 22 characters.
+
+Always: `graph` (not `flowchart`), no `@{ }` syntax, no links to subgraphs.
 
 **Flowchart skeleton.** Always this shape:
 
 ```text
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
 graph TB
   subgraph CANVAS[" "]
     direction TB
@@ -43,7 +51,7 @@ graph TB
 
 **Connectors.** `-->` main flow. `-.->` data or artifacts: `linkStyle N stroke:#50e6ff,stroke-width:1.5px,stroke-dasharray:4 4`.
 Failure: `linkStyle N stroke:#f1707b,stroke-width:2px,stroke-dasharray:5 4`. Edges are numbered from 0 in
-source order. No edge labels.
+source order. Short edge labels (a few words) are fine; the init line styles them.
 
 **Layout.** Keep the flow a tree; hang artifacts and failures off as leaves. Link nodes, never subgraphs. A stage
 entered from above needs two nodes on its top row or the line crosses its title. At most about 15 nodes and

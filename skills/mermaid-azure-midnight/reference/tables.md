@@ -87,6 +87,9 @@ secondary references.
 
 ## Writing rules
 
+- Wrap each table in `<div style="overflow-x:auto;max-width:100%">` ... `</div>` (same HTML block, no blank lines),
+  so a wide table scrolls inside its own box on narrow screens. Do not force `white-space:nowrap` on whole prose or
+  status cells; the pills and short chips already keep themselves on one line.
 - No blank lines anywhere between `<table>` and `</table>`. A blank line ends the Markdown HTML block and the
   rest of the table shows as raw text.
 - Do not indent the HTML by four or more spaces; Markdown turns it into a code block. Keep lines flush left.
@@ -101,7 +104,7 @@ secondary references.
 | Target | Result |
 |---|---|
 | VS Code preview, docs sites | As designed |
-| Azure DevOps wiki | Expected to render (the wiki allows HTML); not yet checked |
+| Azure DevOps wiki | Colours, borders, fonts and the header rule render. `border-radius` is dropped, so corners, chips and pills are square |
 | GitHub | Styles stripped; shows a plain table with chips as inline code |
 | Offline | As designed, except icons (they load from the internet) |
 

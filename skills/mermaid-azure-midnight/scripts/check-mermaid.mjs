@@ -6,7 +6,8 @@
 //
 //   --target ado   Azure DevOps wiki profile: also flags syntax the wiki does not support.
 //   --target web   Default. GitHub, VS Code, mermaid.live, docs sites.
-//   --versions     Mermaid major versions to render with (default 11). Loaded from cdn.jsdelivr.net.
+//   --versions     Mermaid versions to render with (default 11). Loaded from cdn.jsdelivr.net.
+//                  For the Azure DevOps wiki use 8.13.9,9.4.3,10,11: its Mermaid version is not published.
 //   --png <dir>    Save a screenshot of each rendered block for visual review.
 //   --static       Lint only; skip the browser render.
 //
@@ -41,7 +42,7 @@ function blocks(file) {
   const re = /^(```mermaid|::: ?mermaid)\s*\n([\s\S]*?)^(```|:::)\s*$/gm;
   for (let m; (m = re.exec(text));) out.push({ line: text.slice(0, m.index).split('\n').length, src: m[2].trim() });
   // Styled HTML tables outside code fences. Fenced content is blanked (line count kept) so examples are skipped.
-  const unfenced = text.replace(/^(```|:::)[^\n]*\n[\s\S]*?^(```|:::)\s*$/gm, (m) => m.replace(/[^\n]/g, ''));
+  const unfenced = text.replace(/^(```|:::)[^\n]*\n[\s\S]*?^(```|:::)\s*$/gm, (m) => m.replace(/[^\n]/g, ' '));
   const tre = /^[ \t]*<table[\s>][\s\S]*?<\/table>/gm;
   for (let m; (m = tre.exec(unfenced));) out.push({ line: unfenced.slice(0, m.index).split('\n').length, src: text.slice(m.index, m.index + m[0].length), table: true });
   return out;
@@ -104,7 +105,22 @@ function lint(src) {
     if (/@\{/.test(src)) errors.push('Azure DevOps wiki: @{ } node syntax is not supported');
     if (/\bfa:fa-/.test(src)) errors.push('Azure DevOps wiki: FontAwesome icons are not supported');
     if (/---->/.test(src)) errors.push('Azure DevOps wiki: long arrows (---->) are not supported');
-    if (/<img/i.test(src)) warnings.push('Azure DevOps wiki: <img> icons are not verified there; keep an icon-free fallback');
+    if (/<img/i.test(src)) errors.push('Azure DevOps wiki: remove <img> icons (scripts/to-ado.mjs does it)');
+    // The wiki answers "Unsupported diagram type" for diagrams that other renderers accept.
+    // These rules keep to what wiki-rendered diagrams are known to use; scripts/to-ado.mjs applies them.
+    let cfg = null;
+    try { cfg = init ? JSON.parse(init[1]) : null; } catch { /* reported above */ }
+    if (cfg) {
+      const allowed = ['theme', 'themeVariables', 'flowchart', 'themeCSS'];
+      const extra = Object.keys(cfg).filter(k => !allowed.includes(k));
+      if (extra.length) errors.push(`Azure DevOps wiki: init keys ${extra.join(', ')} not in the wiki-safe set (${allowed.join(', ')})`);
+      const fontVars = ['fontFamily', 'fontSize'].filter(k => k in (cfg.themeVariables ?? {}));
+      if (fontVars.length) errors.push(`Azure DevOps wiki: themeVariables.${fontVars.join('/')} - set fonts in themeCSS instead`);
+      const flowExtra = Object.keys(cfg.flowchart ?? {}).filter(k => !['curve', 'nodeSpacing', 'rankSpacing', 'padding'].includes(k));
+      if (flowExtra.length) errors.push(`Azure DevOps wiki: flowchart.${flowExtra.join(', flowchart.')} - use <br/> line breaks instead of wrappingWidth`);
+      if (!/^%%\{init: \{"\w+": /.test(src)) warnings.push('Azure DevOps wiki: write the init JSON with a space after ":" and "," (as scripts/to-ado.mjs does)');
+    }
+    if (kind === 'sequenceDiagram' && /^\s*box\b/m.test(body)) errors.push('Azure DevOps wiki: sequence "box" is not parsed by older Mermaid - remove it (scripts/to-ado.mjs does it)');
   } else if (/@\{\s*(icon|img):/.test(src)) {
     warnings.push('@{ icon: } / @{ img: } nodes: icon packs are not registered in Markdown renderers, and img nodes break the dark theme. Use inline <img> in labels');
   }
@@ -146,7 +162,11 @@ const pageCheck = () => {
     if (hit) crossings++;
   }
   if (crossings) issues.push(`${crossings} pair(s) of connectors cross`);
-  pts.forEach(a => nodes.forEach(n => { if (a.slice(4, -4).some(p => inside(p, n.r, -2))) issues.push(`a connector runs through box "${n.n}"`); }));
+  // Skip the boxes a connector starts or ends in; curved shapes (cylinders) let the end sit inside the bounding box.
+  pts.forEach(a => nodes.forEach(n => {
+    if (inside(a[0], n.r, 8) || inside(a[a.length - 1], n.r, 8)) return;
+    if (a.slice(4, -4).some(p => inside(p, n.r, -2))) issues.push(`a connector runs through box "${n.n}"`);
+  }));
   const titles = [...svg.querySelectorAll('.cluster-label .nodeLabel')].filter(t => t.textContent.trim()).map(t => ({ t: t.textContent.trim(), r: t.getBoundingClientRect() }));
   titles.forEach(t => { if (pts.some(a => a.some(p => inside(p, t.r, 3)))) issues.push(`a connector runs through title "${t.t}"`); });
   svg.querySelectorAll('g.node').forEach(n => {
@@ -156,7 +176,11 @@ const pageCheck = () => {
   const warnings = [];
   const broken = [...svg.querySelectorAll('img')].filter(i => !i.naturalWidth).length;
   if (broken) warnings.push(`${broken} icon(s) did not load (offline or wrong name)`);
-  const wrapped = [...svg.querySelectorAll('g.node .nodeLabel')].filter(l => l.getBoundingClientRect().height > 30).map(l => l.textContent.trim());
+  // A label may hold deliberate <br> line breaks; only flag lines the renderer added.
+  const lineHeight = (l) => parseFloat(getComputedStyle(l).lineHeight) || parseFloat(getComputedStyle(l).fontSize) * 1.5;
+  const wrapped = [...svg.querySelectorAll('g.node .nodeLabel')]
+    .filter(l => l.getBoundingClientRect().height > (l.querySelectorAll('br').length + 1) * lineHeight(l) + 6)
+    .map(l => l.textContent.trim());
   if (wrapped.length) warnings.push(`label wraps onto two lines: ${wrapped.map(w => `"${w}"`).join(', ')}`);
   const vb = svg.viewBox.baseVal;
   return { issues, warnings, size: `${Math.round(vb.width)}x${Math.round(vb.height)}` };
@@ -185,7 +209,12 @@ async function render(items) {
         const res = await page.evaluate(async (src, id) => {
           const out = document.getElementById('out');
           try {
-            const { svg } = await window.mermaid.render(id, src);
+            // Mermaid 10+ returns a promise of { svg }; 8.x and 9.x want a container and return the SVG string.
+            let result;
+            try { result = await window.mermaid.render(id, src); }
+            catch (e) { if (!/createElementNS|reading 'append'/.test(String(e.message))) throw e; result = window.mermaid.render(id, src, () => {}, out); }
+            const svg = typeof result === 'string' ? result : result.svg;
+            if (/Syntax error in/.test(svg)) throw new Error('Syntax error in diagram');
             out.innerHTML = svg;
             // Show at natural size so measurements are in real pixels.
             const el = out.querySelector('svg'), vb = el.viewBox.baseVal;

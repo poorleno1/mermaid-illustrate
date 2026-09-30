@@ -5,6 +5,7 @@ cyan code chips inside the sentences, and a rounded status pill per row. Icons i
 
 Use for runbooks, pipeline stages, release notes, change plans: any table where each row needs a sentence or two.
 
+<div style="overflow-x:auto;max-width:100%">
 <table style="border-collapse:separate;border-spacing:0;width:100%;max-width:960px;background:#0b1a2e;color:#e6f1ff;border:1px solid #1f3a5f;border-radius:10px;overflow:hidden;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55">
 <thead>
 <tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">Stage</th><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">What happens</th><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;">Status</th></tr>
@@ -16,6 +17,7 @@ Use for runbooks, pipeline stages, release notes, change plans: any table where 
 <tr><td style="padding:13px 18px;vertical-align:top;background:#10243f;border-top:1px solid #1f3a5f;font-weight:600;white-space:nowrap;width:1%;"><img src="https://api.iconify.design/fluent/calendar-clock-24-regular.svg?color=%23ffb900" width="18" height="18" alt="" style="vertical-align:-4px;margin-right:10px">PROD</td><td style="padding:13px 18px;vertical-align:top;background:#10243f;border-top:1px solid #1f3a5f;line-height:1.9;">Needs approval and runs only between 08:00 and 16:00 CET on weekdays.</td><td style="padding:13px 18px;vertical-align:top;background:#10243f;border-top:1px solid #1f3a5f;white-space:nowrap;width:1%;"><span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#3b0f14;color:#f1707b;border:1px solid rgba(241,112,123,0.55);font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f1707b;margin-right:7px;vertical-align:1px"></span>Blocked</span></td></tr>
 </tbody>
 </table>
+</div>
 
 Plain Markdown fallback (for GitHub, which strips the styling):
 

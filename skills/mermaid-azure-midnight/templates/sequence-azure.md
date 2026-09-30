@@ -34,3 +34,34 @@ sequenceDiagram
     ADO->>ST: write state, release lease
   end
 ```
+
+## Azure DevOps wiki version
+
+Generated with `scripts/to-ado.mjs`. The `box` canvas and the `sequence` settings are removed (older Mermaid cannot
+parse `box`), so the space between the `rect` bands takes the page colour. Keep every message inside a `rect`.
+
+::: mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0b1a2e", "primaryTextColor": "#e6f1ff", "textColor": "#e6f1ff", "lineColor": "#3ca0ff", "actorBkg": "#0e2a4a", "actorBorder": "#0078d4", "actorTextColor": "#e6f1ff", "actorLineColor": "#24476f", "signalColor": "#3ca0ff", "signalTextColor": "#e6f1ff", "labelBoxBkgColor": "#10243f", "labelBoxBorderColor": "#24476f", "labelTextColor": "#9cc3ea", "loopTextColor": "#9cc3ea", "noteBkgColor": "#3a2c00", "noteBorderColor": "#ffb900", "noteTextColor": "#fff4ce", "activationBkgColor": "#004a8f", "activationBorderColor": "#3ca0ff", "sequenceNumberColor": "#0b1a2e"}, "themeCSS": "text.actor, text.actor > tspan, .messageText, .noteText, .noteText > tspan, .labelText, .labelText > tspan, .loopText, .loopText > tspan { font-family: Geist, Segoe UI, Helvetica, Arial !important; }"}}%%
+sequenceDiagram
+  autonumber
+  participant ADO as Azure DevOps
+  participant ID as Entra ID
+  participant ST as tfstate storage
+  participant ARM as Resource Manager
+
+  rect rgb(16, 36, 63)
+    ADO->>ID: request token (workload identity)
+    ID-->>ADO: access token
+  end
+  rect rgb(16, 36, 63)
+    ADO->>ST: terraform init (lease state)
+    ADO->>ARM: terraform plan
+    ARM-->>ADO: current resources
+  end
+  Note over ADO,ID: Approval + business hours
+  rect rgb(16, 36, 63)
+    ADO->>ARM: terraform apply tfplan-prod
+    ARM-->>ADO: provisioning result
+    ADO->>ST: write state, release lease
+  end
+:::

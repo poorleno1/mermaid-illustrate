@@ -6,7 +6,7 @@ Each environment applies its own saved plan.
 ## With icons (GitHub, VS Code, docs sites)
 
 ```mermaid
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
 graph TB
   subgraph CANVAS[" "]
     direction TB
@@ -80,12 +80,14 @@ graph TB
   linkStyle 5,9,13 stroke:#50e6ff,stroke-width:1.5px,stroke-dasharray:4 4
 ```
 
-## Without icons (Azure DevOps wiki)
+## Azure DevOps wiki version
 
-Same diagram, icons removed. Use this on the wiki until icons are confirmed to render there.
+Generated with `scripts/to-ado.mjs` from the version above: no icons, one diagram font, explicit line breaks and
+only the settings the wiki accepts. Publish this one to the wiki; the web version shows "Unsupported diagram type."
+there.
 
-```mermaid
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
+::: mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0e2a4a", "primaryBorderColor": "#0078d4", "primaryTextColor": "#e6f1ff", "textColor": "#e6f1ff", "lineColor": "#3ca0ff", "titleColor": "#9cc3ea", "clusterBkg": "#10243f", "clusterBorder": "#24476f", "edgeLabelBackground": "#0b1a2e", "background": "#0b1a2e"}, "flowchart": {"curve": "basis", "nodeSpacing": 36, "rankSpacing": 44, "padding": 16}, "themeCSS": ".nodeLabel, .edgeLabel, .cluster-label, .label { font-family: Geist, Segoe UI, Helvetica, Arial; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }"}}%%
 graph TB
   subgraph CANVAS[" "]
     direction TB
@@ -157,4 +159,4 @@ graph TB
   linkStyle default stroke:#3ca0ff,stroke-width:2px
   linkStyle 2 stroke:#f1707b,stroke-width:2px,stroke-dasharray:5 4
   linkStyle 5,9,13 stroke:#50e6ff,stroke-width:1.5px,stroke-dasharray:4 4
-```
+:::
