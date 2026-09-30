@@ -37,17 +37,19 @@ sequenceDiagram
 
 ## Azure DevOps wiki version
 
-Generated with `scripts/to-ado.mjs`. The `box` canvas and the `sequence` settings are removed (older Mermaid cannot
-parse `box`), so the space between the `rect` bands takes the page colour. Keep every message inside a `rect`.
+The same diagram with the settings line moved below `sequenceDiagram` by `scripts/to-ado.mjs`. The `box` canvas
+and the `sequence` settings render on the wiki unchanged.
 
 ::: mermaid
-%%{init: {"theme": "base", "themeVariables": {"background": "#0b1a2e", "primaryTextColor": "#e6f1ff", "textColor": "#e6f1ff", "lineColor": "#3ca0ff", "actorBkg": "#0e2a4a", "actorBorder": "#0078d4", "actorTextColor": "#e6f1ff", "actorLineColor": "#24476f", "signalColor": "#3ca0ff", "signalTextColor": "#e6f1ff", "labelBoxBkgColor": "#10243f", "labelBoxBorderColor": "#24476f", "labelTextColor": "#9cc3ea", "loopTextColor": "#9cc3ea", "noteBkgColor": "#3a2c00", "noteBorderColor": "#ffb900", "noteTextColor": "#fff4ce", "activationBkgColor": "#004a8f", "activationBorderColor": "#3ca0ff", "sequenceNumberColor": "#0b1a2e"}, "themeCSS": "text.actor, text.actor > tspan, .messageText, .noteText, .noteText > tspan, .labelText, .labelText > tspan, .loopText, .loopText > tspan { font-family: Geist, Segoe UI, Helvetica, Arial !important; }"}}%%
 sequenceDiagram
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","background":"#0b1a2e","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","actorBkg":"#0e2a4a","actorBorder":"#0078d4","actorTextColor":"#e6f1ff","actorLineColor":"#24476f","signalColor":"#3ca0ff","signalTextColor":"#e6f1ff","labelBoxBkgColor":"#10243f","labelBoxBorderColor":"#24476f","labelTextColor":"#9cc3ea","loopTextColor":"#9cc3ea","noteBkgColor":"#3a2c00","noteBorderColor":"#ffb900","noteTextColor":"#fff4ce","activationBkgColor":"#004a8f","activationBorderColor":"#3ca0ff","sequenceNumberColor":"#0b1a2e"},"sequence":{"mirrorActors":false,"messageMargin":40,"boxMargin":12,"actorMargin":60,"width":190,"noteMargin":12}}}%%
   autonumber
-  participant ADO as Azure DevOps
-  participant ID as Entra ID
-  participant ST as tfstate storage
-  participant ARM as Resource Manager
+  box rgb(11, 26, 46)
+    participant ADO as Azure DevOps
+    participant ID as Entra ID
+    participant ST as tfstate storage
+    participant ARM as Resource Manager
+  end
 
   rect rgb(16, 36, 63)
     ADO->>ID: request token (workload identity)

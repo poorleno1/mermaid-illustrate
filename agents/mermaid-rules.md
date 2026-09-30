@@ -9,14 +9,11 @@
 
 When writing any Mermaid diagram or styled table in Markdown, follow these rules.
 
-**Target.** GitHub / VS Code / docs: the skeleton below, optional icons. Azure DevOps wiki: the skeleton below
-shows "Unsupported diagram type." there, so convert it first. Either run `skills/mermaid-azure-midnight/scripts/to-ado.mjs`,
-or by hand:
-- drop `fontFamily`, `fontSize`, `wrappingWidth` and any `sequence` section from the init line;
-- put `.nodeLabel, .edgeLabel, .cluster-label, .label { font-family: Geist, Segoe UI, Helvetica, Arial; }` at the
-  start of `themeCSS`, and remove the `.bpCode` and `.nodeLabel img` rules;
-- write the init JSON with a space after every `:` and `,`;
-- remove icons and any sequence `box`, and break label lines with `<br/>` at about 22 characters.
+**Target.** GitHub / VS Code / docs: the skeleton below as written, optional icons. Azure DevOps wiki: the first
+line of every Mermaid block must be the diagram keyword, or the wiki shows "Unsupported diagram type." Put the
+`%%{init}%%` line **second**, directly below `graph TB` or `sequenceDiagram` (or run
+`skills/mermaid-azure-midnight/scripts/to-ado.mjs`). No `%%` comment and no `---` front matter above the keyword.
+Everything else, icons and fonts included, renders on the wiki as designed.
 
 Always: `graph` (not `flowchart`), no `@{ }` syntax, no links to subgraphs.
 

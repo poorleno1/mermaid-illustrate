@@ -12,8 +12,9 @@ rendering: diagrams with Mermaid 10, 11 and 12, tables through a Markdown render
 ## Pick the render target first
 
 - `web`: GitHub, VS Code preview, mermaid.live, docs sites. Icons allowed. Templates are written for this profile.
-- `ado`: Azure DevOps wiki. Web-profile diagrams show **"Unsupported diagram type."** there. Write the web
-  version, then convert it with `scripts/to-ado.mjs` (no icons, one diagram font, conservative settings).
+- `ado`: Azure DevOps wiki. The first line of every Mermaid block must be the diagram keyword, or the wiki shows
+  **"Unsupported diagram type."** Write the normal version, then convert it with `scripts/to-ado.mjs`, which moves
+  the settings line below the keyword. Fonts, icons and the sequence canvas all render there.
 
 GitHub strips all inline styles, so styled tables show there as plain tables. The Azure DevOps wiki keeps table
 colours but drops rounded corners. See `reference/targets.md` when unsure.
@@ -61,11 +62,11 @@ colours but drops rounded corners. See `reference/targets.md` when unsure.
 
 ```bash
 node <skill-dir>/scripts/check-mermaid.mjs <file.md> --target web --versions 10,11,12
-node <skill-dir>/scripts/check-mermaid.mjs <file.ado.md> --target ado --versions 8.13.9,9.4.3,10,11
+node <skill-dir>/scripts/check-mermaid.mjs <file.ado.md> --target ado --versions 10,11
 ```
 
-It renders every diagram and lints every styled table in the file. The wiki's Mermaid version is not published,
-so `ado` files are rendered with old and new versions. Fix every `error`. Run `npm install` in
+It renders every diagram and lints every styled table in the file. For `ado` files the checker also fails any block
+whose first line is not the diagram keyword. Fix every `error`. Run `npm install` in
 `scripts/` once first. `--png <dir>` saves diagram screenshots; `--static` lints without a browser.
 
 ## Hard rules

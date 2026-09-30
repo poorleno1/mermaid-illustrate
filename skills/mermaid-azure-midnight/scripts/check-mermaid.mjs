@@ -7,7 +7,8 @@
 //   --target ado   Azure DevOps wiki profile: also flags syntax the wiki does not support.
 //   --target web   Default. GitHub, VS Code, mermaid.live, docs sites.
 //   --versions     Mermaid versions to render with (default 11). Loaded from cdn.jsdelivr.net.
-//                  For the Azure DevOps wiki use 8.13.9,9.4.3,10,11: its Mermaid version is not published.
+//                  For the Azure DevOps wiki use 10,11: it renders sequence box groups and line-2 settings,
+//                  so it runs a Mermaid 10 release newer than 10.3 (the exact version is not published).
 //   --png <dir>    Save a screenshot of each rendered block for visual review.
 //   --static       Lint only; skip the browser render.
 //
@@ -105,22 +106,12 @@ function lint(src) {
     if (/@\{/.test(src)) errors.push('Azure DevOps wiki: @{ } node syntax is not supported');
     if (/\bfa:fa-/.test(src)) errors.push('Azure DevOps wiki: FontAwesome icons are not supported');
     if (/---->/.test(src)) errors.push('Azure DevOps wiki: long arrows (---->) are not supported');
-    if (/<img/i.test(src)) errors.push('Azure DevOps wiki: remove <img> icons (scripts/to-ado.mjs does it)');
-    // The wiki answers "Unsupported diagram type" for diagrams that other renderers accept.
-    // These rules keep to what wiki-rendered diagrams are known to use; scripts/to-ado.mjs applies them.
-    let cfg = null;
-    try { cfg = init ? JSON.parse(init[1]) : null; } catch { /* reported above */ }
-    if (cfg) {
-      const allowed = ['theme', 'themeVariables', 'flowchart', 'themeCSS'];
-      const extra = Object.keys(cfg).filter(k => !allowed.includes(k));
-      if (extra.length) errors.push(`Azure DevOps wiki: init keys ${extra.join(', ')} not in the wiki-safe set (${allowed.join(', ')})`);
-      const fontVars = ['fontFamily', 'fontSize'].filter(k => k in (cfg.themeVariables ?? {}));
-      if (fontVars.length) errors.push(`Azure DevOps wiki: themeVariables.${fontVars.join('/')} - set fonts in themeCSS instead`);
-      const flowExtra = Object.keys(cfg.flowchart ?? {}).filter(k => !['curve', 'nodeSpacing', 'rankSpacing', 'padding'].includes(k));
-      if (flowExtra.length) errors.push(`Azure DevOps wiki: flowchart.${flowExtra.join(', flowchart.')} - use <br/> line breaks instead of wrappingWidth`);
-      if (!/^%%\{init: \{"\w+": /.test(src)) warnings.push('Azure DevOps wiki: write the init JSON with a space after ":" and "," (as scripts/to-ado.mjs does)');
+    // Verified on the wiki: anything before the diagram keyword (a %%{init}%% line, a %% comment, --- front matter)
+    // gives "Unsupported diagram type." The settings line works as the second line. scripts/to-ado.mjs moves it.
+    const firstLine = src.split('\n').find(l => l.trim())?.trim() ?? '';
+    if (!/^[A-Za-z]/.test(firstLine) || /^%%/.test(firstLine)) {
+      errors.push('Azure DevOps wiki: the first line must be the diagram keyword (graph, sequenceDiagram, ...); move the %%{init}%% line below it (scripts/to-ado.mjs does it)');
     }
-    if (kind === 'sequenceDiagram' && /^\s*box\b/m.test(body)) errors.push('Azure DevOps wiki: sequence "box" is not parsed by older Mermaid - remove it (scripts/to-ado.mjs does it)');
   } else if (/@\{\s*(icon|img):/.test(src)) {
     warnings.push('@{ icon: } / @{ img: } nodes: icon packs are not registered in Markdown renderers, and img nodes break the dark theme. Use inline <img> in labels');
   }

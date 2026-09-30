@@ -49,8 +49,8 @@ The layout engine (dagre) can draw a tree with no crossings. Every extra cross-l
 
 - Keep self-messages (`A->>A: ...`) on the first and last participant under about 24 characters. Mermaid centres
   the text on the lifeline, so longer text spills past the canvas edge.
-- Put every message inside a `rect` band. In the Azure DevOps profile there is no `box` canvas, and the bands are
-  what keeps message text on a dark background.
+- Put every message inside a `rect` band, and all participants inside the `box` canvas, so message text always sits
+  on a dark background.
 
 ## Nodes
 

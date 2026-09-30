@@ -46,8 +46,8 @@ What each `themeCSS` rule does:
 - `.edgeLabel ...` and `.edgeLabel rect`: puts connector labels on a navy chip in pale blue. Without them some
   Mermaid versions draw a light box behind the label.
 
-For the Azure DevOps wiki, `scripts/to-ado.mjs` rewrites this line: fonts move into `themeCSS`, `wrappingWidth`
-goes, and the Geist Mono rule is dropped. See `reference/targets.md`.
+For the Azure DevOps wiki, this line goes second, directly below `graph TB` or `sequenceDiagram`
+(`scripts/to-ado.mjs` moves it). See `reference/targets.md`.
 
 ## Classes
 

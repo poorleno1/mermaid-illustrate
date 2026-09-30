@@ -51,11 +51,12 @@ pipeline stages"). The skill loads on its own. To check any Markdown file (diagr
 node skills/mermaid-azure-midnight/scripts/check-mermaid.mjs docs/page.md --target web --versions 10,11,12
 ```
 
-For the Azure DevOps wiki, convert first. The web version shows "Unsupported diagram type." on the wiki:
+For the Azure DevOps wiki, convert first. The wiki needs the diagram keyword on the first line of every block and
+shows "Unsupported diagram type." otherwise; `to-ado.mjs` moves the settings line below it:
 
 ```bash
 node skills/mermaid-azure-midnight/scripts/to-ado.mjs docs/page.md docs/page.ado.md
-node skills/mermaid-azure-midnight/scripts/check-mermaid.mjs docs/page.ado.md --target ado --versions 8.13.9,9.4.3,10,11
+node skills/mermaid-azure-midnight/scripts/check-mermaid.mjs docs/page.ado.md --target ado --versions 10,11
 ```
 
 **Configuration**: `--target ado|web` picks the rule set, `--versions` the Mermaid versions to render with,

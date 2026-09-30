@@ -82,39 +82,39 @@ graph TB
 
 ## Azure DevOps wiki version
 
-Generated with `scripts/to-ado.mjs` from the version above: no icons, one diagram font, explicit line breaks and
-only the settings the wiki accepts. Publish this one to the wiki; the web version shows "Unsupported diagram type."
-there.
+The same diagram with the settings line moved below `graph TB` by `scripts/to-ado.mjs`. The wiki shows
+"Unsupported diagram type." when a block does not start with the diagram keyword; everything else, icons included,
+renders as designed.
 
 ::: mermaid
-%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0e2a4a", "primaryBorderColor": "#0078d4", "primaryTextColor": "#e6f1ff", "textColor": "#e6f1ff", "lineColor": "#3ca0ff", "titleColor": "#9cc3ea", "clusterBkg": "#10243f", "clusterBorder": "#24476f", "edgeLabelBackground": "#0b1a2e", "background": "#0b1a2e"}, "flowchart": {"curve": "basis", "nodeSpacing": 36, "rankSpacing": 44, "padding": 16}, "themeCSS": ".nodeLabel, .edgeLabel, .cluster-label, .label { font-family: Geist, Segoe UI, Helvetica, Arial; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }"}}%%
 graph TB
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
   subgraph CANVAS[" "]
     direction TB
     subgraph VAL["1 · Validate"]
-      TRG(["main · terraform/**"])
-      FMT["fmt + validate"]
-      SCAN["tflint + checkov"]
-      STOP["Fail: stop and notify"]
+      TRG(["<img src='https://api.iconify.design/devicon/azuredevops.svg' width='18' height='18'/> main · terraform/**"])
+      FMT["<img src='https://api.iconify.design/logos/terraform-icon.svg' width='18' height='18'/> fmt + validate"]
+      SCAN["<img src='https://api.iconify.design/fluent/shield-task-24-regular.svg?color=%233ca0ff' width='18' height='18'/> tflint + checkov"]
+      STOP["<img src='https://api.iconify.design/fluent/dismiss-circle-24-regular.svg?color=%23f1707b' width='18' height='18'/> Fail: stop and notify"]
     end
     subgraph DEV["2 · DEV"]
-      PDEV["terraform plan"]
-      TFD[("tfplan-dev")]
-      ADEV["terraform apply"]
+      PDEV["<img src='https://api.iconify.design/fluent/clipboard-task-list-ltr-24-regular.svg?color=%233ca0ff' width='18' height='18'/> terraform plan"]
+      TFD[("<img src='https://api.iconify.design/fluent/document-lock-24-regular.svg?color=%2350e6ff' width='18' height='18'/> tfplan-dev")]
+      ADEV["<img src='https://api.iconify.design/fluent/cloud-arrow-up-24-regular.svg?color=%23e6f1ff' width='18' height='18'/> terraform apply"]
     end
     subgraph UAT["3 · UAT"]
-      PUAT["terraform plan"]
-      TFU[("tfplan-uat")]
-      GUAT{{"Approval"}}
-      AUAT["terraform apply"]
+      PUAT["<img src='https://api.iconify.design/fluent/clipboard-task-list-ltr-24-regular.svg?color=%233ca0ff' width='18' height='18'/> terraform plan"]
+      TFU[("<img src='https://api.iconify.design/fluent/document-lock-24-regular.svg?color=%2350e6ff' width='18' height='18'/> tfplan-uat")]
+      GUAT{{"<img src='https://api.iconify.design/fluent/person-available-24-regular.svg?color=%23ffb900' width='18' height='18'/> Approval"}}
+      AUAT["<img src='https://api.iconify.design/fluent/cloud-arrow-up-24-regular.svg?color=%23e6f1ff' width='18' height='18'/> terraform apply"]
     end
     subgraph PRD["4 · PROD"]
-      PPRD["terraform plan"]
-      TFP[("tfplan-prod")]
-      GPRD{{"Approval + hours"}}
-      APRD["terraform apply"]
+      PPRD["<img src='https://api.iconify.design/fluent/clipboard-task-list-ltr-24-regular.svg?color=%233ca0ff' width='18' height='18'/> terraform plan"]
+      TFP[("<img src='https://api.iconify.design/fluent/document-lock-24-regular.svg?color=%2350e6ff' width='18' height='18'/> tfplan-prod")]
+      GPRD{{"<img src='https://api.iconify.design/fluent/calendar-clock-24-regular.svg?color=%23ffb900' width='18' height='18'/> Approval + hours"}}
+      APRD["<img src='https://api.iconify.design/fluent/cloud-arrow-up-24-regular.svg?color=%23e6f1ff' width='18' height='18'/> terraform apply"]
     end
-    DONE(["Released"])
+    DONE(["<img src='https://api.iconify.design/fluent/checkmark-circle-24-regular.svg?color=%236ccb5f' width='18' height='18'/> Released"])
   end
 
   TRG --> FMT
