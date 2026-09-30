@@ -17,7 +17,7 @@ Both styled tables share one look:
 - Painted on the cells only. The `<table>` element carries no background or border (see Writing rules).
 - Fixed width: columns in pixels that add up to 1040px, so every table has the same width.
 - Header: full-width `#0e2a4a` band, pale-blue `#9cc3ea` capitals, 12px semi-bold, and a thick 3px `#3ca0ff` rule under it.
-- Text: white `#e6f1ff` in Geist. Names and commands in Geist Mono, cyan `#50e6ff`.
+- Text: white `#e6f1ff` in Segoe UI Variable. Names and commands in Cascadia Code, cyan `#50e6ff`.
 - Icons in the first column when a fitting one exists in `reference/icons.md`. Optional; leave them out rather than force a weak match.
 - One to four columns. Wider data belongs in a plain Markdown table or a separate file.
 
@@ -29,9 +29,9 @@ parts.
 **Table and header**
 
 ```html
-<table style="border-collapse:separate;border-spacing:0;width:1040px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:#e6f1ff">
+<table style="border-collapse:separate;border-spacing:0;width:1040px;font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;color:#e6f1ff">
 <thead>
-<tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;width:260px;box-sizing:border-box;border-top:1px solid #1f3a5f;border-left:1px solid #1f3a5f">Header</th></tr>
+<tr><th scope="col" style="background:#0e2a4a;color:#9cc3ea;text-align:left;padding:13px 18px;font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:3px solid #3ca0ff;width:260px;box-sizing:border-box;border-top:1px solid #1f3a5f;border-left:1px solid #1f3a5f">Header</th></tr>
 </thead>
 <tbody>
 ```
@@ -56,7 +56,7 @@ Append these to a cell's `style` by column role:
 | Column role | Add to the cell style |
 |---|---|
 | First column (the thing) | `font-weight:600;white-space:nowrap;width:1%;` |
-| Name column, simple style (cyan mono) | `font-family:'Geist Mono','Cascadia Mono',Consolas,monospace;font-size:13.5px;color:#50e6ff;white-space:nowrap;width:1%;` |
+| Name column, simple style (cyan mono) | `font-family:'Cascadia Code','Cascadia Mono',Consolas,monospace;font-size:13.5px;color:#50e6ff;white-space:nowrap;width:1%;` |
 | Prose column with chips, detailed style | `line-height:1.9;` (room for chips between lines) |
 | Status column | `white-space:nowrap;width:1%;` |
 
@@ -64,8 +64,8 @@ Append these to a cell's `style` by column role:
 secondary references.
 
 ```html
-<code style="display:inline-block;padding:2px 9px;border-radius:6px;background:#06323b;color:#50e6ff;border:1px solid rgba(80,230,255,0.4);font-family:'Geist Mono','Cascadia Mono',Consolas,monospace;font-size:12.5px;line-height:1.6;white-space:nowrap">tfplan-uat</code>
-<code style="display:inline-block;padding:2px 9px;border-radius:6px;background:#0e2a4a;color:#3ca0ff;border:1px solid rgba(0,120,212,0.7);font-family:'Geist Mono','Cascadia Mono',Consolas,monospace;font-size:12.5px;line-height:1.6;white-space:nowrap">northeurope</code>
+<code style="display:inline-block;padding:2px 9px;border-radius:6px;background:#06323b;color:#50e6ff;border:1px solid rgba(80,230,255,0.4);font-family:'Cascadia Code','Cascadia Mono',Consolas,monospace;font-size:12.5px;line-height:1.6;white-space:nowrap">tfplan-uat</code>
+<code style="display:inline-block;padding:2px 9px;border-radius:6px;background:#0e2a4a;color:#3ca0ff;border:1px solid rgba(0,120,212,0.7);font-family:'Cascadia Code','Cascadia Mono',Consolas,monospace;font-size:12.5px;line-height:1.6;white-space:nowrap">northeurope</code>
 ```
 
 **Status pills** (fully rounded, coloured dot). Pick by meaning, as in the diagrams:
@@ -79,11 +79,11 @@ secondary references.
 | Grey | Not started, shared, neutral |
 
 ```html
-<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#0f2e17;color:#6ccb5f;border:1px solid rgba(108,203,95,0.55);font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#6ccb5f;margin-right:7px;vertical-align:1px"></span>Passed</span>
-<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#3a2c00;color:#ffb900;border:1px solid rgba(255,185,0,0.55);font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ffb900;margin-right:7px;vertical-align:1px"></span>Waiting</span>
-<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#3b0f14;color:#f1707b;border:1px solid rgba(241,112,123,0.55);font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f1707b;margin-right:7px;vertical-align:1px"></span>Blocked</span>
-<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#0e2a4a;color:#3ca0ff;border:1px solid rgba(60,160,255,0.55);font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3ca0ff;margin-right:7px;vertical-align:1px"></span>Low</span>
-<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#10243f;color:#9cc3ea;border:1px solid rgba(156,195,234,0.4);font-family:Geist,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#9cc3ea;margin-right:7px;vertical-align:1px"></span>Not started</span>
+<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#0f2e17;color:#6ccb5f;border:1px solid rgba(108,203,95,0.55);font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#6ccb5f;margin-right:7px;vertical-align:1px"></span>Passed</span>
+<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#3a2c00;color:#ffb900;border:1px solid rgba(255,185,0,0.55);font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ffb900;margin-right:7px;vertical-align:1px"></span>Waiting</span>
+<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#3b0f14;color:#f1707b;border:1px solid rgba(241,112,123,0.55);font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f1707b;margin-right:7px;vertical-align:1px"></span>Blocked</span>
+<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#0e2a4a;color:#3ca0ff;border:1px solid rgba(60,160,255,0.55);font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3ca0ff;margin-right:7px;vertical-align:1px"></span>Low</span>
+<span style="display:inline-block;padding:2px 11px;border-radius:999px;background:#10243f;color:#9cc3ea;border:1px solid rgba(156,195,234,0.4);font-family:'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.03em;line-height:1.7;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#9cc3ea;margin-right:7px;vertical-align:1px"></span>Not started</span>
 ```
 
 **Icon** at the start of a first-column cell (same Iconify rules as the diagrams):

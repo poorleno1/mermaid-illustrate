@@ -24,24 +24,31 @@ error `f1707b`, neutral `e6f1ff`.
 
 | Role | Font stack | Applied by |
 |---|---|---|
-| Words: stage titles, gates, outcomes, notes | `Geist, Segoe UI, Helvetica, Arial` | `themeVariables.fontFamily` |
-| Code: commands, files, branches, resource names | `Geist Mono, Cascadia Mono, Consolas, monospace` | `bpCode` class via `themeCSS` |
+| Words: stage titles, gates, outcomes, notes | `Segoe UI Variable Text, Segoe UI, Helvetica, Arial` | `themeVariables.fontFamily` |
+| Code: commands, files, branches, resource names | `Cascadia Code, Cascadia Mono, Consolas, monospace` | `bpCode` class via `themeCSS` |
 
-Geist is not installed on most machines and Azure DevOps does not load web fonts, so readers without it see
-Segoe UI and Cascadia Mono. Mermaid sizes boxes with whatever font the reader has, so layouts stay intact.
+Both fonts ship with Windows 11, so Azure DevOps readers on Windows see them as designed without installing
+anything (the wiki does not load web fonts). Elsewhere the stacks fall back to Segoe UI, Helvetica or Arial and to
+Consolas or the system monospace. Mermaid sizes boxes with whatever font the reader has, so layouts stay intact.
+Chosen 2026-09-30 from six rendered options (option E, "Windows native"); it replaces Geist and Geist Mono.
+
+In HTML (tables, code cards) use the quoted stacks `'Segoe UI Variable Text','Segoe UI',Helvetica,Arial,sans-serif`
+and `'Cascadia Code','Cascadia Mono',Consolas,monospace`. For large headings in HTML, `'Segoe UI Variable Display'`
+at weight 650. Inside `themeVariables` keep the unquoted stacks above: quotes and hyphens there make Mermaid drop
+the whole settings line.
 
 ## Flowchart init block
 
 Paste as the first line. Do not reformat it: it must stay valid JSON on one line.
 
 ```text
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Segoe UI Variable Text, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Cascadia Code, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
 ```
 
 What each `themeCSS` rule does:
 
 - `.nodeLabel img`: puts an icon left of its text at 18px. Without it Mermaid stacks the icon above the text and stretches it.
-- `.bpCode .nodeLabel`: switches nodes with the `bpCode` class to Geist Mono.
+- `.bpCode .nodeLabel`: switches nodes with the `bpCode` class to Cascadia Code.
 - `.cluster-label .nodeLabel`: semi-bold stage titles.
 - `.edgeLabel ...` and `.edgeLabel rect`: puts connector labels on a navy chip in pale blue. Without them some
   Mermaid versions draw a light box behind the label.
@@ -115,7 +122,7 @@ Sequence diagrams ignore `classDef`, `style` and icons. Use this init block and 
 Notes use the amber decision colours, so keep them for approvals and waits.
 
 ```text
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","background":"#0b1a2e","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","actorBkg":"#0e2a4a","actorBorder":"#0078d4","actorTextColor":"#e6f1ff","actorLineColor":"#24476f","signalColor":"#3ca0ff","signalTextColor":"#e6f1ff","labelBoxBkgColor":"#10243f","labelBoxBorderColor":"#24476f","labelTextColor":"#9cc3ea","loopTextColor":"#9cc3ea","noteBkgColor":"#3a2c00","noteBorderColor":"#ffb900","noteTextColor":"#fff4ce","activationBkgColor":"#004a8f","activationBorderColor":"#3ca0ff","sequenceNumberColor":"#0b1a2e"},"sequence":{"mirrorActors":false,"messageMargin":40,"boxMargin":12,"actorMargin":60,"width":190,"noteMargin":12}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Segoe UI Variable Text, Segoe UI, Helvetica, Arial","fontSize":"15px","background":"#0b1a2e","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","actorBkg":"#0e2a4a","actorBorder":"#0078d4","actorTextColor":"#e6f1ff","actorLineColor":"#24476f","signalColor":"#3ca0ff","signalTextColor":"#e6f1ff","labelBoxBkgColor":"#10243f","labelBoxBorderColor":"#24476f","labelTextColor":"#9cc3ea","loopTextColor":"#9cc3ea","noteBkgColor":"#3a2c00","noteBorderColor":"#ffb900","noteTextColor":"#fff4ce","activationBkgColor":"#004a8f","activationBorderColor":"#3ca0ff","sequenceNumberColor":"#0b1a2e"},"sequence":{"mirrorActors":false,"messageMargin":40,"boxMargin":12,"actorMargin":60,"width":190,"noteMargin":12}}}%%
 ```
 
 ## Other diagram types

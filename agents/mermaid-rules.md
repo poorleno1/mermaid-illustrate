@@ -20,7 +20,7 @@ Always: `graph` (not `flowchart`), no `@{ }` syntax, no links to subgraphs.
 **Flowchart skeleton.** Always this shape:
 
 ```text
-%%{init: {"theme":"base","themeVariables":{"fontFamily":"Geist, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Geist Mono, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Segoe UI Variable Text, Segoe UI, Helvetica, Arial","fontSize":"15px","primaryColor":"#0e2a4a","primaryBorderColor":"#0078d4","primaryTextColor":"#e6f1ff","textColor":"#e6f1ff","lineColor":"#3ca0ff","titleColor":"#9cc3ea","clusterBkg":"#10243f","clusterBorder":"#24476f","edgeLabelBackground":"#0b1a2e","background":"#0b1a2e"},"themeCSS":".nodeLabel img { display: inline-block !important; width: 18px !important; height: 18px !important; vertical-align: middle; margin: 0 8px 2px 0 !important; } .bpCode .nodeLabel { font-family: Cascadia Code, Cascadia Mono, Consolas, monospace; } .cluster-label .nodeLabel { font-weight: 600; letter-spacing: 0.01em; } .edgeLabel, .edgeLabel p, .edgeLabel span, .labelBkg { background-color: #0b1a2e !important; color: #9cc3ea !important; } .edgeLabel rect { fill: #0b1a2e !important; opacity: 1 !important; }","flowchart":{"curve":"basis","nodeSpacing":36,"rankSpacing":44,"padding":16,"wrappingWidth":280}}}%%
 graph TB
   subgraph CANVAS[" "]
     direction TB
@@ -70,3 +70,10 @@ DevOps wiki stretches it to the page width), header cells with pixel widths addi
 `box-sizing:border-box` on every cell. Pills: green done, amber waiting, red blocked, blue info, grey
 not started. No blank lines and no 4-space indentation inside `<table>`; no Markdown syntax inside cells. GitHub strips
 the styles, so GitHub-only files get plain Markdown tables.
+
+**Code.** Wiki and VS Code pages: convert fenced code with `skills/mermaid-azure-midnight/scripts/code-cards.mjs`
+(navy language header with a 3px blue rule, Cascadia Code, colours: commands `#3ca0ff`, variables and keys `#50e6ff`,
+flags `#9cc3ea`, strings `#ffb900`, comments `#6b8bb0`). GitHub-only files keep plain fences.
+
+**Fonts.** Segoe UI Variable Text for words, Cascadia Code for code (both ship with Windows 11). In `themeVariables`
+write them unquoted: `Segoe UI Variable Text, Segoe UI, Helvetica, Arial` and `Cascadia Code, Cascadia Mono, Consolas, monospace`.

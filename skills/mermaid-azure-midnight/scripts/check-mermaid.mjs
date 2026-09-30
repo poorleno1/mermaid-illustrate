@@ -192,11 +192,11 @@ async function render(items) {
       const page = await browser.newPage();
       await page.setViewport({ width: 1400, height: 1000 });
       await page.setContent(`<!doctype html><meta charset="utf-8">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@${v}/dist/mermaid.min.js"></script>
 <body style="margin:0;background:#ffffff"><div id="out" style="display:inline-block;padding:16px"></div></body>`, { waitUntil: 'networkidle0', timeout: 60000 });
       await page.evaluate(async () => {
-        await Promise.all(['15px Geist', '600 15px Geist', '15px Geist Mono'].map(f => document.fonts.load(f).catch(() => {})));
+        // The standard fonts are Windows 11 system fonts (Segoe UI Variable, Cascadia Code); load them before measuring.
+        await Promise.all(['15px "Segoe UI Variable Text"', '600 15px "Segoe UI Variable Text"', '15px "Cascadia Code"'].map(f => document.fonts.load(f).catch(() => {})));
         window.mermaid.initialize({ startOnLoad: false });
       });
       const actual = await page.evaluate(() => window.mermaid?.version?.() ?? '');

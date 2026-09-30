@@ -10,7 +10,7 @@ A comprehensive skill for AI coding agents to create 23 types of Mermaid diagram
 
 A second, focused skill for Azure, Azure DevOps and Terraform documentation lives in
 [`skills/mermaid-azure-midnight/`](skills/mermaid-azure-midnight/SKILL.md). It makes Markdown documents look
-polished: Mermaid diagrams and styled tables in a dark navy theme, Geist and Geist Mono fonts, Iconify icons,
+polished: Mermaid diagrams and styled tables in a dark navy theme, Segoe UI Variable and Cascadia Code fonts (Windows 11 built-ins), Iconify icons,
 verified templates and a checker.
 
 | Purpose | File |
@@ -20,6 +20,7 @@ verified templates and a checker.
 | Layout rules and Mermaid pitfalls | `skills/mermaid-azure-midnight/reference/layout.md` |
 | Table styles (detailed, simple), chips and status pills | `skills/mermaid-azure-midnight/reference/tables.md` |
 | Icon method and 46-icon catalog | `skills/mermaid-azure-midnight/reference/icons.md` |
+| Code cards (syntax-coloured code blocks) | `skills/mermaid-azure-midnight/reference/code.md`, `scripts/code-cards.mjs` |
 | Where diagrams render (Azure DevOps wiki, GitHub, offline) | `skills/mermaid-azure-midnight/reference/targets.md` |
 | Copy-paste templates | `skills/mermaid-azure-midnight/templates/` |
 | Always-on rules for agents without skill support | `agents/mermaid-rules.md` |

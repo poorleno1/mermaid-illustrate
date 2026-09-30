@@ -20,8 +20,8 @@ wiki answers "Unsupported diagram type." as soon as anything comes before it. Te
 | `---` front matter (even `title:` only) then `graph TB` | Unsupported diagram type |
 | `graph TB` then `%%{init: ...}%%` | **Renders with the full theme** |
 
-With the settings line on line 2, everything in the templates renders as designed: Geist fonts, the `bpCode` Geist
-Mono rule, connector label chips, icons, and the sequence `box` canvas.
+With the settings line on line 2, everything in the templates renders as designed: Segoe UI Variable, the `bpCode`
+Cascadia Code rule, connector label chips, icons, and the sequence `box` canvas.
 
 Convert before publishing:
 
@@ -40,8 +40,8 @@ Other wiki rules from Microsoft's documentation:
 - No long arrows (`---->`).
 - No FontAwesome.
 - Both `::: mermaid ... :::` blocks and standard ```` ```mermaid ```` fences render (fences since Sprint 274).
-- The wiki does not load web fonts. Readers see Segoe UI and Cascadia Mono in place of Geist unless they have
-  Geist installed.
+- The wiki does not load web fonts. The standard fonts (Segoe UI Variable, Cascadia Code) ship with Windows 11, so
+  Windows readers see them as designed; other readers get the fallbacks in the font stacks.
 
 ## Styled tables
 

@@ -1,12 +1,12 @@
 ---
 name: mermaid-azure-midnight
-description: Make Markdown documents look polished in the Azure Midnight house style (dark navy theme, Geist and Geist Mono fonts, Iconify icons). Covers Mermaid diagrams and styled tables for Azure, Azure DevOps, Terraform and pipeline documentation. Use whenever the user asks for a Mermaid diagram, flowchart, pipeline diagram, architecture diagram, sequence diagram or wiki diagram, asks for a table in a Markdown file or wiki page, or wants a Markdown document or Azure DevOps wiki page to look better.
+description: Make Markdown documents look polished in the Azure Midnight house style (dark navy theme, Segoe UI Variable and Cascadia Code fonts, Iconify icons). Covers Mermaid diagrams, styled tables and syntax-coloured code blocks for Azure, Azure DevOps, Terraform and pipeline documentation. Use whenever the user asks for a Mermaid diagram, flowchart, pipeline diagram, architecture diagram, sequence diagram or wiki diagram, asks for a table or nicer code blocks in a Markdown file or wiki page, or wants a Markdown document or Azure DevOps wiki page to look better.
 ---
 
 # Azure Midnight: diagrams and tables for Markdown
 
-Produces diagrams and tables that share one look: dark navy surfaces, Azure blue and cyan accents, Geist for
-words, Geist Mono for anything typed in a terminal, and small tinted icons. Every rule here was verified by
+Produces diagrams and tables that share one look: dark navy surfaces, Azure blue and cyan accents, Segoe UI
+Variable for words, Cascadia Code for anything typed in a terminal, and small tinted icons. Every rule here was verified by
 rendering: diagrams with Mermaid 10, 11 and 12, tables through a Markdown renderer.
 
 ## Pick the render target first
@@ -58,6 +58,12 @@ colours but drops rounded corners. See `reference/targets.md` when unsure.
 5. **Keep the HTML block intact**: no blank lines inside `<table>`, no indentation of four spaces or more, and
    `<code>` or `<b>` instead of Markdown syntax inside cells.
 
+## Code blocks
+
+Write normal fenced code, then run `node <skill-dir>/scripts/code-cards.mjs page.md page.cards.md`. Every fence
+except Mermaid becomes a code card: navy language header with the blue rule, Cascadia Code, palette syntax colours.
+Use them for wiki and VS Code pages; keep plain fences for GitHub-only files. Details in `reference/code.md`.
+
 ## Check before handing over
 
 ```bash
@@ -87,5 +93,6 @@ whose first line is not the diagram keyword. Fix every `error`. Run `npm install
 | `reference/theme.md` | Any diagram: colours, classes and the init block |
 | `reference/layout.md` | Building or fixing a flowchart layout |
 | `reference/tables.md` | Any styled table: styles, building blocks, pills, writing rules |
+| `reference/code.md` | Code blocks: code cards, syntax colours, supported languages |
 | `reference/icons.md` | Adding icons to a diagram or table (web target) |
 | `reference/targets.md` | Unsure where the file will render, or it renders wrong there |
